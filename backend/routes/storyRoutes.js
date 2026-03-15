@@ -1,11 +1,11 @@
-import express from 'express';
+const express = require('express');
 const {
   createStory,
   getStories,
   viewStory,
   deleteStory
-} = '../controllers/storyController.js';
-const { protect } = '../middleware/auth.js';
+} = require('../controllers/storyController.js');
+const { protect } = require('../middleware/auth.js');
 
 const router = express.Router();
 
@@ -18,4 +18,4 @@ router.route('/:id')
 
 router.put('/:id/view', protect, viewStory);
 
-export default router;
+module.exports = router;

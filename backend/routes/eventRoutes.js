@@ -1,12 +1,12 @@
-import express from 'express';
+const express = require('express');
 const {
   createEvent,
   getEvents,
   getEvent,
   rsvpEvent,
   getMyEvents
-} = '../controllers/eventController.js';
-const { protect } = '../middleware/auth.js';
+} = require('../controllers/eventController.js');
+const { protect } = require('../middleware/auth.js');
 
 const router = express.Router();
 
@@ -21,4 +21,4 @@ router.route('/:id')
 
 router.post('/:id/rsvp', protect, rsvpEvent);
 
-export default router;
+module.exports = router;

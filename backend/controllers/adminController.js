@@ -1,6 +1,6 @@
-import User from '../models/User.js';
-import Post from '../models/Post.js';
-import Report from '../models/Report.js';
+const User = require('../models/User.js');
+const Post = require('../models/Post.js');
+const Report = require('../models/Report.js');
 
 // @desc    Get dashboard stats
 // @route   GET /api/admin/stats

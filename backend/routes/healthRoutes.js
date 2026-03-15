@@ -1,4 +1,4 @@
-import express from 'express';
+const express = require('express');
 const {
   createHealthLog,
   getHealthLogs,
@@ -6,8 +6,8 @@ const {
   getReminders,
   logMedicationTaken,
   getHealthStats
-} = '../controllers/healthController.js';
-const { protect } = '../middleware/auth.js';
+} = require('../controllers/healthController.js');
+const { protect } = require('../middleware/auth.js');
 
 const router = express.Router();
 
@@ -22,4 +22,4 @@ router.route('/reminders')
 router.post('/reminders/:id/log', protect, logMedicationTaken);
 router.get('/stats', protect, getHealthStats);
 
-export default router;
+module.exports = router;

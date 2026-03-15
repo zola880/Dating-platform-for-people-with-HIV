@@ -1,4 +1,4 @@
-import express from 'express';
+const express = require('express');
 const  {
   getDatingPreferences,
   updateDatingPreferences,
@@ -7,8 +7,8 @@ const  {
   getLikesReceived,
   getMyLikes,
   getEnhancedRecommendations
-} = '../controllers/datingController.js';
-const { protect } = '../middleware/auth.js';
+} = require('../controllers/datingController.js');
+const { protect } = require('../middleware/auth.js');
 
 const router = express.Router();
 
@@ -22,4 +22,4 @@ router.post('/like/:userId', protect, likeUser);
 router.get('/likes-received', protect, getLikesReceived);
 router.get('/my-likes', protect, getMyLikes);
 
-export default router;
+module.exports = router;

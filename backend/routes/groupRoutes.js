@@ -1,4 +1,4 @@
-import express from 'express';
+const express = require('express');
 const {
   createGroup,
   getGroups,
@@ -6,8 +6,8 @@ const {
   joinGroup,
   leaveGroup,
   getMyGroups
-} = '../controllers/groupController.js';
-const { protect } = '../middleware/auth.js';
+} = require('../controllers/groupController.js');
+const { protect } = require('../middleware/auth.js');
 
 const router = express.Router();
 
@@ -23,4 +23,4 @@ router.route('/:id')
 router.post('/:id/join', protect, joinGroup);
 router.post('/:id/leave', protect, leaveGroup);
 
-export default router;
+module.exports = router;

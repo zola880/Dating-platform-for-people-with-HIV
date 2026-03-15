@@ -47,4 +47,4 @@ const medicationReminderSchema = new mongoose.Schema({
 
 const MedicationReminder = mongoose.model('MedicationReminder', medicationReminderSchema);
 
-export default MedicationReminder;
+module.exports = MedicationReminder;

@@ -1,12 +1,12 @@
-import { Server } from 'socket.io';
-import jwt from 'jsonwebtoken';
-import User from '../models/User.js';
-import Message from '../models/Message.js';
-import { moderateContent } from './aiModeration.js';
+const { Server } = require('socket.io');
+const jwt = require('jsonwebtoken');
+const User = require('../models/User.js');
+const Message = require('../models/Message.js');
+const { moderateContent } = require('./aiModeration.js');
 
 const userSockets = new Map(); // userId -> socketId
 
-export const initializeSocket = (server) => {
+exports.initializeSocket = (server) => {
   const io = new Server(server, {
     cors: {
       origin: ['http://localhost:5173', 'http://127.0.0.1:5173'],

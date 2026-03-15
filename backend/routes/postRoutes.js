@@ -1,4 +1,4 @@
-import express from 'express';
+const express = require('express');
 const {
   createPost,
   getPosts,
@@ -6,9 +6,9 @@ const {
   likePost,
   commentOnPost,
   deletePost
-} = '../controllers/postController.js';
-const { protect } = '../middleware/auth.js';
-const { validatePost, handleValidationErrors } = '../middleware/validation.js';
+} = require('../controllers/postController.js');
+const { protect } = require('../middleware/auth.js');
+const { validatePost, handleValidationErrors } = require('../middleware/validation.js');
 
 const router = express.Router();
 
@@ -23,4 +23,4 @@ router.route('/:id')
 router.put('/:id/like', protect, likePost);
 router.post('/:id/comment', protect, commentOnPost);
 
-export default router;
+module.exports = router;

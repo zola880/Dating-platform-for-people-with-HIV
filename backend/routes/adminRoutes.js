@@ -1,11 +1,11 @@
-import express from 'express';
+const express = require('express');
 const {
   getDashboardStats,
   toggleBanUser,
   getAllUsers,
   deletePostAdmin
-} ='../controllers/adminController.js';
-const { protect, admin } = '../middleware/auth.js';
+} = require('../controllers/adminController.js');
+const { protect, admin } = require('../middleware/auth.js');
 
 const router = express.Router();
 
@@ -14,4 +14,4 @@ router.get('/users', protect, admin, getAllUsers);
 router.put('/users/:id/ban', protect, admin, toggleBanUser);
 router.delete('/posts/:id', protect, admin, deletePostAdmin);
 
-export default router;
+module.exports = router;

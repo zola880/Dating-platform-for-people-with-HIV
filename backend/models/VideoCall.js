@@ -43,4 +43,4 @@ const videoCallSchema = new mongoose.Schema({
 
 const VideoCall = mongoose.model('VideoCall', videoCallSchema);
 
-export default VideoCall;
+module.exports = VideoCall;

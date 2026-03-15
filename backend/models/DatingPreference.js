@@ -73,4 +73,4 @@ const datingPreferenceSchema = new mongoose.Schema({
 
 const DatingPreference = mongoose.model('DatingPreference', datingPreferenceSchema);
 
-export default DatingPreference;
+module.exports = DatingPreference;

@@ -1,6 +1,6 @@
-import { body, validationResult } from 'express-validator';
+const { body, validationResult } = require('express-validator');
 
-export const validateRegister = [
+exports.validateRegister = [
   body('username').trim().isLength({ min: 3 }).withMessage('Username must be at least 3 characters'),
   body('email').isEmail().withMessage('Please enter a valid email'),
   body('password').isLength({ min: 6 }).withMessage('Password must be at least 6 characters'),
@@ -9,16 +9,16 @@ export const validateRegister = [
   body('country').notEmpty().withMessage('Country is required')
 ];
 
-export const validateLogin = [
+exports.validateLogin = [
   body('email').isEmail().withMessage('Please enter a valid email'),
   body('password').notEmpty().withMessage('Password is required')
 ];
 
-export const validatePost = [
+exports.validatePost = [
   body('text').trim().isLength({ min: 1, max: 1000 }).withMessage('Post text must be between 1 and 1000 characters')
 ];
 
-export const handleValidationErrors = (req, res, next) => {
+exports.handleValidationErrors = (req, res, next) => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
     return res.status(400).json({ errors: errors.array() });

@@ -1,11 +1,11 @@
-import express from 'express';
+const express = require('express');
 const {
   sendMatchRequest,
   respondToMatch,
   getMatches,
   getPendingMatches
-} = '../controllers/matchController.js';
-const { protect } = '../middleware/auth.js';
+} = require('../controllers/matchController.js');
+const { protect } = require('../middleware/auth.js');
 
 const router = express.Router();
 
@@ -14,4 +14,4 @@ router.get('/pending', protect, getPendingMatches);
 router.post('/:userId', protect, sendMatchRequest);
 router.put('/:matchId', protect, respondToMatch);
 
-export default router;
+module.exports = router;

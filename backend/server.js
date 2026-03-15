@@ -1,5 +1,6 @@
 const express = require('express');
 const dotenv = require('dotenv');
+const path = require('path');
 const cors = require('cors');
 const { createServer } = require('http');
 const rateLimit = require('express-rate-limit');
@@ -23,7 +24,7 @@ const healthRoutes = require('./routes/healthRoutes.js');
 const uploadRoutes = require('./routes/uploadRoutes.js');
 const datingRoutes = require('./routes/datingRoutes.js');
 
-dotenv.config();
+dotenv.config({ path: path.join(__dirname, '.env') });
 
 const app = express();
 const httpServer = createServer(app);

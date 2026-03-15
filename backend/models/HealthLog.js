@@ -64,4 +64,4 @@ const healthLogSchema = new mongoose.Schema({
 
 const HealthLog = mongoose.model('HealthLog', healthLogSchema);
 
-export default HealthLog;
+module.exports = HealthLog;

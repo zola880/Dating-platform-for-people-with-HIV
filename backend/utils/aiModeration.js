@@ -6,7 +6,7 @@ const offensiveKeywords = [
   // Add more keywords as needed
 ];
 
-export const moderateContent = async (text) => {
+exports.moderateContent = async (text) => {
   try {
     // Simple keyword-based moderation
     const lowerText = text.toLowerCase();

@@ -29,4 +29,4 @@ likeSchema.index({ fromUser: 1, toUser: 1 }, { unique: true });
 
 const Like = mongoose.model('Like', likeSchema);
 
-export default Like;
+module.exports = Like;

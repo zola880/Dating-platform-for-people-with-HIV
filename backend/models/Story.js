@@ -1,4 +1,4 @@
-import mongoose from 'mongoose';
+const mongoose=require('mongoose');
 
 const storySchema = new mongoose.Schema({
   user: {
@@ -42,4 +42,4 @@ storySchema.index({ expiresAt: 1 }, { expireAfterSeconds: 0 });
 
 const Story = mongoose.model('Story', storySchema);
 
-export default Story;
+module.exports = Story;
