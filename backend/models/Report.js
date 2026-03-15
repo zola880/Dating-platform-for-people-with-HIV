@@ -34,3 +34,4 @@ const reportSchema = new mongoose.Schema({
 const Report = mongoose.model('Report', reportSchema);
 
 module.exports = Report;
+// i added this comment to remind myself that this is the report model which allows users to report other users or posts for inappropriate content. It includes fields for the reporter, the reported user or post, the reason for the report, and the status of the report.
