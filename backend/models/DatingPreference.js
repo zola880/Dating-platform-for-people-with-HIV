@@ -48,6 +48,7 @@ const datingPreferenceSchema = new mongoose.Schema({
   },
   wantsChildren: {
     type: String,
+    required:true,
     enum: ['yes', 'no', 'maybe', 'have-and-want-more']
   },
   smoking: {
