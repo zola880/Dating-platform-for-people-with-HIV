@@ -6,7 +6,7 @@ import Spinner from '../components/Spinner';
 import './Feed.css';
 
 const Feed = () => {
-  const { user } = useAuth();
+  // const { user } = useAuth();
   const [posts, setPosts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
