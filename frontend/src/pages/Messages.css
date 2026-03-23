@@ -1,0 +1,138 @@
+.messages-container {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 20px;
+}
+
+.messages-header {
+  text-align: center;
+  margin-bottom: 30px;
+}
+
+.messages-header h1 {
+  color: #333;
+  margin-bottom: 10px;
+}
+
+.messages-header p {
+  color: #666;
+}
+
+.conversations-list {
+  background: white;
+  border-radius: 10px;
+  overflow: hidden;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+}
+
+.conversation-item {
+  display: flex;
+  padding: 20px;
+  border-bottom: 1px solid #eee;
+  text-decoration: none;
+  transition: background-color 0.3s;
+}
+
+.conversation-item:hover {
+  background-color: #f9f9f9;
+}
+
+.conversation-avatar {
+  position: relative;
+  margin-right: 15px;
+}
+
+.conversation-avatar img {
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+.unread-badge {
+  position: absolute;
+  top: -5px;
+  right: -5px;
+  background-color: #e74c3c;
+  color: white;
+  border-radius: 50%;
+  width: 22px;
+  height: 22px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 12px;
+  font-weight: bold;
+}
+
+.conversation-info {
+  flex: 1;
+}
+
+.conversation-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  margin-bottom: 8px;
+}
+
+.conversation-header h3 {
+  color: #333;
+  font-size: 1.1rem;
+  margin: 0;
+}
+
+.conversation-time {
+  color: #999;
+  font-size: 0.8rem;
+}
+
+.conversation-preview {
+  color: #666;
+  font-size: 0.9rem;
+  margin-bottom: 5px;
+}
+
+.conversation-detail {
+  color: #999;
+  font-size: 0.8rem;
+}
+
+.no-conversations {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 400px;
+}
+
+.no-conversations-content {
+  text-align: center;
+  background: white;
+  padding: 40px;
+  border-radius: 10px;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+}
+
+.no-conversations-content h3 {
+  color: #333;
+  margin-bottom: 10px;
+}
+
+.no-conversations-content p {
+  color: #666;
+  margin-bottom: 20px;
+}
+
+.browse-btn {
+  display: inline-block;
+  background: #007bff;
+  color: white;
+  padding: 10px 20px;
+  border-radius: 5px;
+  text-decoration: none;
+  transition: background-color 0.3s;
+}
+
+.browse-btn:hover {
+  background: #0056b3;
+}

@@ -1,23 +1,16 @@
 const mongoose = require('mongoose');
 
+/**
+ * Connects to MongoDB database
+ * Uses the MONGODB_URI from environment variables
+ */
 const connectDB = async () => {
   try {
-    // Check if the URI is defined in the environment variables
-    if (!process.env.MONGO_URI) {
-      throw new Error('MONGO_URI is not defined in the environment variables');
-    }
-
-    const conn = await mongoose.connect(process.env.MONGO_URI, {
-      // Modern Mongoose handles most options automatically, 
-      // but adding a timeout helps identify connection issues faster.
-      serverSelectionTimeoutMS: 5000,
-    });
-
+    const conn = await mongoose.connect(process.env.MONGODB_URI);
     console.log(`MongoDB Connected: ${conn.connection.host}`);
   } catch (error) {
-    console.error(`Database Connection Error: ${error.message}`);
-    // Exit process with failure
-    process.exit(1);
+    console.error(`Error connecting to MongoDB: ${error.message}`);
+    process.exit(1); // Exit process with failure
   }
 };
 

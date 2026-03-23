@@ -1,0 +1,244 @@
+/* Dashboard.css - Embrace Brand */
+
+.dashboard.embrace {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 1.5rem;
+  background: #FEF8E7;
+  min-height: calc(100vh - 80px);
+}
+
+/* Header */
+.dashboard-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 1rem;
+  margin-bottom: 2.5rem;
+  padding: 1rem 0;
+  border-bottom: 1px solid rgba(0,0,0,0.05);
+}
+
+.user-greeting h1 {
+  font-family: 'Poppins', 'Inter', sans-serif;
+  font-size: 2rem;
+  font-weight: 600;
+  color: #2C3E50;
+  margin: 0;
+  line-height: 1.2;
+}
+
+.user-greeting p {
+  color: #7A8B9F;
+  margin: 0.25rem 0 0;
+  font-size: 0.9rem;
+}
+
+.user-stats {
+  display: flex;
+  gap: 1.5rem;
+  background: rgba(255,255,255,0.6);
+  backdrop-filter: blur(8px);
+  border-radius: 48px;
+  padding: 0.5rem 1.2rem;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.03);
+  border: 1px solid rgba(255,255,255,0.3);
+}
+
+.stat-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 0 0.5rem;
+}
+
+.stat-value {
+  font-weight: 700;
+  font-size: 1.2rem;
+  color: #F25E5E;
+}
+
+.stat-label {
+  font-size: 0.7rem;
+  color: #7A8B9F;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+/* Members Section */
+.members-section {
+  background: rgba(255,255,255,0.5);
+  backdrop-filter: blur(4px);
+  border-radius: 32px;
+  padding: 2rem;
+  box-shadow: 0 8px 24px rgba(0,0,0,0.03);
+  border: 1px solid rgba(255,255,255,0.6);
+}
+
+.members-section h2 {
+  font-family: 'Poppins', 'Inter', sans-serif;
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: #2C3E50;
+  margin: 0 0 0.5rem 0;
+}
+
+.members-count {
+  color: #7A8B9F;
+  margin-bottom: 2rem;
+  font-size: 0.9rem;
+}
+
+.members-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 1.8rem;
+}
+
+.member-card {
+  background: white;
+  border-radius: 28px;
+  overflow: hidden;
+  transition: all 0.3s cubic-bezier(0.2, 0.9, 0.4, 1.1);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+  border: 1px solid rgba(0,0,0,0.03);
+}
+
+.member-card:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 16px 32px rgba(0,0,0,0.08);
+}
+
+.member-image-wrapper {
+  position: relative;
+  width: 100%;
+  padding-top: 100%; /* 1:1 aspect ratio */
+  overflow: hidden;
+  background: #FEF8E7;
+}
+
+.member-image {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.4s ease;
+}
+
+.member-card:hover .member-image {
+  transform: scale(1.05);
+}
+
+.member-info {
+  padding: 1.2rem 1.2rem 1.5rem;
+  text-align: center;
+}
+
+.member-info h3 {
+  font-size: 1.2rem;
+  font-weight: 600;
+  color: #2C3E50;
+  margin: 0 0 0.25rem 0;
+}
+
+.member-details {
+  color: #7A8B9F;
+  font-size: 0.8rem;
+  margin-bottom: 0.75rem;
+}
+
+.member-bio {
+  color: #4A5B6E;
+  font-size: 0.85rem;
+  line-height: 1.4;
+  margin-bottom: 1rem;
+  height: 60px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+}
+
+.message-btn {
+  display: inline-block;
+  background: linear-gradient(135deg, #F25E5E, #F4D03F);
+  color: white;
+  padding: 0.6rem 1.2rem;
+  border-radius: 40px;
+  text-decoration: none;
+  font-size: 0.85rem;
+  font-weight: 500;
+  transition: all 0.2s;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+}
+
+.message-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 12px rgba(242,94,94,0.2);
+  background: linear-gradient(135deg, #E55B5B, #E5C03F);
+}
+
+/* Empty state */
+.no-members {
+  text-align: center;
+  padding: 3rem;
+}
+
+.empty-state {
+  background: rgba(255,255,255,0.6);
+  border-radius: 48px;
+  padding: 2rem;
+  display: inline-block;
+}
+
+.empty-icon {
+  font-size: 3rem;
+  display: block;
+  margin-bottom: 1rem;
+}
+
+/* Error message */
+.error-message {
+  background: #FFEBEE;
+  color: #C62828;
+  padding: 0.75rem 1rem;
+  border-radius: 32px;
+  margin-bottom: 1rem;
+  text-align: center;
+  font-size: 0.9rem;
+  border-left: 4px solid #C62828;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .dashboard.embrace {
+    padding: 1rem;
+  }
+
+  .dashboard-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 1rem;
+  }
+
+  .user-stats {
+    align-self: stretch;
+    justify-content: space-around;
+  }
+
+  .members-section {
+    padding: 1.2rem;
+  }
+
+  .members-grid {
+    gap: 1rem;
+  }
+
+  .member-card {
+    border-radius: 20px;
+  }
+}

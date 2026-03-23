@@ -1,45 +1,55 @@
-const mongoose=require('mongoose');
+const mongoose = require('mongoose');
 
-const postSchema = new mongoose.Schema({
-  text: {
-    type: String,
-    required: true
-  },
-  images: [{
-    type: String
-  }],
-  createdBy: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: 'User',
-    required: true
-  },
-  likes: [{
-    type: mongoose.Schema.Types.ObjectId,
-    ref: 'User'
-  }],
-  comments: [{
+const commentSchema = new mongoose.Schema(
+  {
     user: {
       type: mongoose.Schema.Types.ObjectId,
-      ref: 'User'
+      ref: 'User',
+      required: true,
     },
-    text: String,
-    createdAt: {
-      type: Date,
-      default: Date.now
-    }
-  }],
-  isModerated: {
-    type: Boolean,
-    default: false
+    text: {
+      type: String,
+      required: true,
+      trim: true,
+      maxlength: 500,
+    },
   },
-  moderationFlag: {
-    type: String,
-    default: ''
+  {
+    timestamps: true,
   }
-}, {
-  timestamps: true
-});
+);
 
-const Post = mongoose.model('Post', postSchema);
+const postSchema = new mongoose.Schema(
+  {
+    user: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'User',
+      required: true,
+    },
+    content: {
+      type: String,
+      required: true,
+      trim: true,
+      maxlength: 2000,
+    },
+    image: {
+      type: String,
+      default: null, // file path or filename
+    },
+    likes: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'User',
+      },
+    ],
+    comments: [commentSchema],
+  },
+  {
+    timestamps: true,
+  }
+);
 
-module.exports = Post;
+// Index for efficient sorting
+postSchema.index({ createdAt: -1 });
+
+module.exports = mongoose.model('Post', postSchema);

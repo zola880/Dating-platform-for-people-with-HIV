@@ -1,90 +1,113 @@
 const express = require('express');
 const dotenv = require('dotenv');
-const path = require('path');
 const cors = require('cors');
-const { createServer } = require('http');
-const rateLimit = require('express-rate-limit');
-const connectDB = require('./config/db.js');
-const { errorHandler, notFound } = require('./middleware/errorHandler.js');
-const { initializeSocket } = require('./utils/socket.js');
+const path = require('path');
+const http = require('http');
+const { Server } = require('socket.io');
+const connectDB = require('./config/db');
+const postRoutes = require('./routes/postRoutes');
+const Message = require('./models/Message'); // Added to save messages via socket
 
-// Routes
-const authRoutes = require('./routes/authRoutes.js');
-const userRoutes = require('./routes/userRoutes.js');
-const postRoutes = require('./routes/postRoutes.js');
-const matchRoutes = require('./routes/matchRoutes.js');
-const messageRoutes = require('./routes/messageRoutes.js');
-const notificationRoutes = require('./routes/notificationRoutes.js');
-const reportRoutes = require('./routes/reportRoutes.js');
-const adminRoutes = require('./routes/adminRoutes.js');
-const groupRoutes = require('./routes/groupRoutes.js');
-const eventRoutes = require('./routes/eventRoutes.js');
-const storyRoutes = require('./routes/storyRoutes.js');
-const healthRoutes = require('./routes/healthRoutes.js');
-const uploadRoutes = require('./routes/uploadRoutes.js');
-const datingRoutes = require('./routes/datingRoutes.js');
-
-dotenv.config({ path: path.join(__dirname, '.env') });
-
-const app = express();
-const httpServer = createServer(app);
+// Load environment variables
+dotenv.config();
 
 // Connect to MongoDB
-const startServer = async () => {
-  try {
-    await connectDB();
+connectDB();
 
-    // Initialize Socket.io
-    const io = initializeSocket(httpServer);
-
-    // Middleware
-    app.use(cors());
-    app.use(express.json());
-    app.use(express.urlencoded({ extended: true }));
-
-    // Rate limiting
-    const limiter = rateLimit({
-      windowMs: 15 * 60 * 1000, // 15 minutes
-      max: 100, // limit each IP to 100 requests per window
-    });
-    app.use('/api/', limiter);
-
-    // Serve static files
-    app.use('/uploads', express.static('uploads'));
-
-    // Routes
-    app.use('/api/auth', authRoutes);
-    app.use('/api/users', userRoutes);
-    app.use('/api/posts', postRoutes);
-    app.use('/api/matches', matchRoutes);
-    app.use('/api/messages', messageRoutes);
-    app.use('/api/notifications', notificationRoutes);
-    app.use('/api/reports', reportRoutes);
-    app.use('/api/admin', adminRoutes);
-    app.use('/api/groups', groupRoutes);
-    app.use('/api/events', eventRoutes);
-    app.use('/api/stories', storyRoutes);
-    app.use('/api/health', healthRoutes);
-    app.use('/api/upload', uploadRoutes);
-    app.use('/api/dating', datingRoutes);
-
-    app.get('/', (req, res) => {
-      res.json({ message: 'API is running' });
-    });
-
-    // Error handling
-    app.use(notFound);
-    app.use(errorHandler);
-
-    const PORT = process.env.PORT || 5000;
-
-    httpServer.listen(PORT, () => {
-      console.log(`Server running on port ${PORT}`);
-    });
-  } catch (error) {
-    console.error(`Error: ${error.message}`);
-    process.exit(1);
+// Initialize Express app
+const app = express();
+const server = http.createServer(app);
+const io = new Server(server, {
+  cors: {
+    origin: "http://localhost:3000", // adjust to your frontend URL
+    methods: ["GET", "POST"]
   }
-};
+});
 
-startServer();
+// Middleware
+app.use(cors()); // Enable CORS for all routes
+app.use(express.json()); // Parse JSON request bodies
+app.use(express.urlencoded({ extended: true })); // Parse URL-encoded request bodies
+
+// Serve static files (uploads folder for profile pictures)
+app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
+
+// Route imports
+const authRoutes = require('./routes/authRoutes');
+const userRoutes = require('./routes/userRoutes');
+const messageRoutes = require('./routes/messageRoutes');
+
+//post routes
+app.use('/api/posts', postRoutes);
+
+// Route definitions
+app.use('/api/auth', authRoutes);
+app.use('/api/users', userRoutes);
+app.use('/api/messages', messageRoutes);
+
+// Root route - API status
+app.get('/', (req, res) => {
+  res.json({ message: 'Safe Connect API is running...' });
+});
+
+// Error handling middleware for 404 - Route not found
+app.use((req, res) => {
+  res.status(404).json({ message: `Route ${req.originalUrl} not found` });
+});
+
+// Global error handling middleware
+app.use((err, req, res, next) => {
+  console.error('Global error:', err);
+  
+  // Handle multer errors
+  if (err.code === 'LIMIT_FILE_SIZE') {
+    return res.status(400).json({ message: 'File size too large. Maximum size is 5MB.' });
+  }
+  
+  res.status(500).json({ message: 'Server error', error: err.message });
+});
+
+// Socket.IO logic
+io.on('connection', (socket) => {
+  console.log('New client connected:', socket.id);
+
+  // Join a room based on user ID (for private messaging)
+  socket.on('join', (userId) => {
+    socket.join(userId);
+    console.log(`User ${userId} joined room ${userId}`);
+  });
+
+  // Handle new private message via socket
+  socket.on('private message', async ({ senderId, receiverId, content, attachments }) => {
+    try {
+      // Save to database (optional: if you prefer to save via API, you can skip this)
+      const message = await Message.create({
+        sender: senderId,
+        receiver: receiverId,
+        content,
+        attachments: attachments || [] // ensure attachments is an array
+      });
+      const populatedMessage = await Message.findById(message._id)
+        .populate('sender', 'name profilePicture')
+        .populate('receiver', 'name profilePicture');
+      // Broadcast to receiver's room
+      io.to(receiverId).emit('new message', populatedMessage);
+      // Acknowledge sender (optional)
+      socket.emit('message sent', populatedMessage);
+    } catch (error) {
+      console.error('Socket message error:', error);
+    }
+  });
+
+  socket.on('disconnect', () => {
+    console.log('Client disconnected:', socket.id);
+  });
+});
+
+// Define port
+const PORT = process.env.PORT || 5000;
+
+// Start server using the HTTP server instead of app.listen
+server.listen(PORT, () => {
+  console.log(`Server running on port ${PORT}`);
+});

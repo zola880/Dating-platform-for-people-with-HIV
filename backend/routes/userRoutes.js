@@ -1,22 +1,25 @@
 const express = require('express');
-const {
-  getUserProfile,
-  updateProfile,
-  searchUsers,
-  getRecommendations,
-  blockUser,
-  unblockUser
-} = require('../controllers/userController.js');
-
-const { protect } = require('../middleware/auth.js');
-
 const router = express.Router();
+const { getAllUsers, getUserById, updateUser } = require('../controllers/userController');
+const { protect } = require('../middleware/auth');
+const upload = require('../middleware/upload');
 
-router.get('/search', protect, searchUsers);
-router.get('/recommendations', protect, getRecommendations);
-router.get('/:id', protect, getUserProfile);
-router.put('/profile', protect, updateProfile);
-router.post('/block/:id', protect, blockUser);
-router.delete('/block/:id', protect, unblockUser);
+// All user routes require authentication
+router.use(protect);
+
+// @route   GET /api/users
+// @desc    Get all users (for browsing)
+// @access  Private
+router.get('/', getAllUsers);
+
+// @route   GET /api/users/:id
+// @desc    Get single user by ID
+// @access  Private
+router.get('/:id', getUserById);
+
+// @route   PUT /api/users/:id
+// @desc    Update user profile
+// @access  Private
+router.put('/:id', upload.single('profilePicture'), updateUser);
 
 module.exports = router;

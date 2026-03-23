@@ -1,10 +1,13 @@
 const express = require('express');
-const { getConversation, getConversations } = require('../controllers/messageController.js');
-const { protect } = require('../middleware/auth.js');
-
 const router = express.Router();
+const upload = require('../middleware/upload');
+const { sendMessage, getMessages, getConversations } = require('../controllers/messageController');
+const { protect } = require('../middleware/auth');
 
-router.get('/', protect, getConversations);
-router.get('/:userId', protect, getConversation);
+router.use(protect);
+
+router.get('/conversations', getConversations);
+router.post('/', upload.array('attachments', 5), sendMessage);
+router.get('/:userId', getMessages);
 
 module.exports = router;
