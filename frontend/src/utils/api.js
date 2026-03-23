@@ -2,7 +2,7 @@ import axios from 'axios';
 
 // Create axios instance with base URL
 const API = axios.create({
-  baseURL: process.env.REACT_APP_API_URL || 'http://localhost:5001/api',
+  baseURL: 'https://dating-platform-for-people-with-hiv.onrender.com/api',
   headers: {
     'Content-Type': 'application/json',
   },
