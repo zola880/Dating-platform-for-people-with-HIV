@@ -6,7 +6,7 @@ import Spinner from '../components/Spinner';
 import './Messages.css';
 
 const Messages = () => {
-  const { user } = useAuth();
+  // const { user } = useAuth();
   const [conversations, setConversations] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
