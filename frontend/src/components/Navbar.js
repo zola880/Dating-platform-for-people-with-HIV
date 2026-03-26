@@ -25,6 +25,10 @@ const Navbar = () => {
         <Link to="/" className="nav-logo">
           Safe Connect
         </Link>
+          
+          {(user?.role === 'admin' || user?.role === 'superadmin') && (
+  <Link to="/admin" className="nav-link">Admin</Link>
+)}
 
         <div className="nav-menu">
           {!user ? (

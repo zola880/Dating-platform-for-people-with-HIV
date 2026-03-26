@@ -1,37 +1,52 @@
-const mongoose=require('mongoose');
+const mongoose = require('mongoose');
 
 const reportSchema = new mongoose.Schema({
-  reporter: {
+  type: {
+    type: String,
+    enum: ['user', 'post', 'comment', 'message'],
+    required: true,
+  },
+  targetUser: {
     type: mongoose.Schema.Types.ObjectId,
     ref: 'User',
-    required: true
   },
-  reportedUser: {
+  targetPost: {
     type: mongoose.Schema.Types.ObjectId,
-    ref: 'User'
+    ref: 'Post',
   },
-  reportedPost: {
+  targetComment: {
+    type: String,
+  },
+  targetMessage: {
     type: mongoose.Schema.Types.ObjectId,
-    ref: 'Post'
+    ref: 'Message',
+  },
+  reportedBy: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'User',
+    required: true,
   },
   reason: {
     type: String,
-    required: true
+    required: true,
   },
-  status: {
+  description: {
     type: String,
-    enum: ['pending', 'reviewed', 'resolved'],
-    default: 'pending'
   },
-  adminNotes: {
+  resolved: {
+    type: Boolean,
+    default: false,
+  },
+  resolvedBy: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'User',
+  },
+  resolvedAt: {
+    type: Date,
+  },
+  actionTaken: {
     type: String,
-    default: ''
-  }
-}, {
-  timestamps: true
-});
+  },
+}, { timestamps: true });
 
-const Report = mongoose.model('Report', reportSchema);
-
-module.exports = Report;
-// i added this comment to remind myself that this is the report model which allows users to report other users or posts for inappropriate content. It includes fields for the reporter, the reported user or post, the reason for the report, and the status of the report.
+module.exports = mongoose.model('Report', reportSchema);

@@ -3,14 +3,15 @@ import { useAuth } from '../context/AuthContext';
 import { likePost, unlikePost, addComment, deleteComment } from '../utils/postApi';
 import './Post.css';
 
-const Post = ({ post, onDelete, onUpdate }) => {
+const Post = ({ post, onDelete }) => {
   const { user } = useAuth();
   const [showComments, setShowComments] = useState(false);
   const [commentText, setCommentText] = useState('');
-  const [liked, setLiked] = useState(post.likes.some(like => like._id === user._id));
-  const [likesCount, setLikesCount] = useState(post.likes.length);
+  const [liked, setLiked] = useState(post.likes?.some(like => like._id === user._id) || false);
+  const [likesCount, setLikesCount] = useState(post.likes?.length || 0);
   const [comments, setComments] = useState(post.comments || []);
   const [loading, setLoading] = useState(false);
+  const [selectedImage, setSelectedImage] = useState(null);
 
   const getProfilePictureUrl = (profilePicture) => {
     if (profilePicture && profilePicture !== 'default-avatar.png') {
@@ -19,9 +20,11 @@ const Post = ({ post, onDelete, onUpdate }) => {
     return '/default-avatar.png';
   };
 
-  const getPostImageUrl = () => {
-    if (post.image) {
-      return `http://localhost:5001/uploads/posts/${post.image}`;
+  const getMediaUrl = () => {
+    // Use media field first, fallback to image (for backward compatibility)
+    const fileName = post.media || post.image;
+    if (fileName && fileName !== 'default-avatar.png') {
+      return `http://localhost:5001/uploads/${fileName}`;
     }
     return null;
   };
@@ -73,21 +76,24 @@ const Post = ({ post, onDelete, onUpdate }) => {
     }
   };
 
+  const mediaUrl = getMediaUrl();
+  const mediaType = post.mediaType || (mediaUrl ? 'image' : 'none'); // fallback to image if mediaUrl exists
+
   return (
     <div className="post">
       <div className="post-header">
         <img
-          src={getProfilePictureUrl(post.user.profilePicture)}
-          alt={post.user.name}
+          src={getProfilePictureUrl(post.user?.profilePicture)}
+          alt={post.user?.name}
           className="post-avatar"
         />
         <div className="post-user-info">
-          <h4>{post.user.name}</h4>
+          <h4>{post.user?.name}</h4>
           <span className="post-date">
             {new Date(post.createdAt).toLocaleString()}
           </span>
         </div>
-        {post.user._id === user._id && (
+        {post.user?._id === user._id && (
           <button className="post-delete" onClick={() => onDelete(post._id)}>
             Delete
           </button>
@@ -95,8 +101,20 @@ const Post = ({ post, onDelete, onUpdate }) => {
       </div>
       <div className="post-content">
         <p>{post.content}</p>
-        {getPostImageUrl() && (
-          <img src={getPostImageUrl()} alt="Post" className="post-image" />
+        {mediaUrl && (
+          <div className="post-media">
+            {mediaType === 'image' ? (
+              <img
+                src={mediaUrl}
+                alt="Post"
+                className="post-image"
+                onClick={() => setSelectedImage(mediaUrl)}
+                style={{ cursor: 'pointer' }}
+              />
+            ) : mediaType === 'video' ? (
+              <video controls src={mediaUrl} className="post-video" />
+            ) : null}
+          </div>
         )}
       </div>
       <div className="post-actions">
@@ -112,18 +130,18 @@ const Post = ({ post, onDelete, onUpdate }) => {
           {comments.map(comment => (
             <div key={comment._id} className="comment">
               <img
-                src={getProfilePictureUrl(comment.user.profilePicture)}
-                alt={comment.user.name}
+                src={getProfilePictureUrl(comment.user?.profilePicture)}
+                alt={comment.user?.name}
                 className="comment-avatar"
               />
               <div className="comment-content">
-                <strong>{comment.user.name}</strong>
+                <strong>{comment.user?.name}</strong>
                 <p>{comment.text}</p>
                 <span className="comment-date">
                   {new Date(comment.createdAt).toLocaleString()}
                 </span>
               </div>
-              {(comment.user._id === user._id || post.user._id === user._id) && (
+              {(comment.user?._id === user._id || post.user?._id === user._id) && (
                 <button
                   onClick={() => handleDeleteComment(comment._id)}
                   className="comment-delete"
@@ -145,6 +163,14 @@ const Post = ({ post, onDelete, onUpdate }) => {
               Post
             </button>
           </form>
+        </div>
+      )}
+      {selectedImage && (
+        <div className="image-modal" onClick={() => setSelectedImage(null)}>
+          <div className="image-modal-content">
+            <button className="image-modal-close" onClick={() => setSelectedImage(null)}>&times;</button>
+            <img src={selectedImage} alt="Full size" />
+          </div>
         </div>
       )}
     </div>

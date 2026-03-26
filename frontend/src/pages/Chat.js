@@ -1,8 +1,10 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
+import { useParams, useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import API from '../utils/api';
 import Spinner from '../components/Spinner';
+import CallModal from '../components/CallModal';
+import { requestNotificationPermission, showNotification } from '../utils/notifications';
 import io from 'socket.io-client';
 import './Chat.css';
 
@@ -10,6 +12,9 @@ const Chat = () => {
   const { userId } = useParams();
   const { user } = useAuth();
   const navigate = useNavigate();
+  const location = useLocation();
+  const incomingOffer = location.state?.incomingOffer;
+
   const [otherUser, setOtherUser] = useState(null);
   const [messages, setMessages] = useState([]);
   const [newMessage, setNewMessage] = useState('');
@@ -21,35 +26,142 @@ const Chat = () => {
   const messagesEndRef = useRef(null);
   const fileInputRef = useRef(null);
   const socketRef = useRef(null);
-  const [selectedImage, setSelectedImage] = useState(null); // for image modal
+  const [selectedImage, setSelectedImage] = useState(null);
 
-  // Initialize socket connection
+  // Call state
+  const [callActive, setCallActive] = useState(false);
+  const [incomingCall, setIncomingCall] = useState(null);
+  const [localStream, setLocalStream] = useState(null);
+  const [remoteStream, setRemoteStream] = useState(null);
+  const [peerConnection, setPeerConnection] = useState(null);
+  const [isMuted, setIsMuted] = useState(false);
+  const [isVideoOff, setIsVideoOff] = useState(false);
+  const [callType, setCallType] = useState('video');
+  const isEndingCall = useRef(false); // prevent multiple calls to endCall
+
+  const activeChatUserId = userId;
+
+  // Request notification permission
+  useEffect(() => {
+    requestNotificationPermission();
+  }, []);
+
+  // Cleanup function for call resources
+  const cleanupCall = () => {
+    console.log('Cleaning up call resources');
+    if (localStream) {
+      localStream.getTracks().forEach(track => {
+        track.stop();
+        console.log('Stopped track:', track.kind);
+      });
+      setLocalStream(null);
+    }
+    if (peerConnection) {
+      peerConnection.close();
+      setPeerConnection(null);
+      console.log('Closed peer connection');
+    }
+    setRemoteStream(null);
+    setCallActive(false);
+    setIncomingCall(null);
+    setIsMuted(false);
+    setIsVideoOff(false);
+    isEndingCall.current = false;
+  };
+
+  // End call – emit to other party and clean up local
+  const endCall = () => {
+    if (isEndingCall.current) return;
+    isEndingCall.current = true;
+    console.log('Ending call...');
+    // Emit end-call to the other user if a call is active or ringing
+    if (callActive || incomingCall) {
+      const target = incomingCall ? incomingCall.from : userId;
+      socketRef.current.emit('end-call', {
+        to: target,
+        from: user._id,
+      });
+      console.log('Emitted end-call to:', target);
+    }
+    // Clean up local resources
+    cleanupCall();
+  };
+
+  // Socket connection
   useEffect(() => {
     socketRef.current = io('http://localhost:5001');
-
     if (user?._id) {
       socketRef.current.emit('join', user._id);
     }
 
-    // Listen for new messages (received from others)
+    // Incoming call
+    socketRef.current.on('incoming-call', ({ offer, from }) => {
+      setIncomingCall({ from, offer });
+      showNotification(
+        `Incoming call from ${otherUser?.name || 'someone'}`,
+        'Tap to answer',
+        '/logo192.png',
+        `/chat/${from}`
+      );
+    });
+
+    // Call accepted
+    socketRef.current.on('call-accepted', async ({ answer, from }) => {
+      if (peerConnection && !callActive && from === userId) {
+        await peerConnection.setRemoteDescription(new RTCSessionDescription(answer));
+        setCallActive(true);
+      }
+    });
+
+    // Call rejected
+    socketRef.current.on('call-rejected', ({ from }) => {
+      if (from === userId) {
+        alert(`${otherUser?.name} declined the call.`);
+        cleanupCall();
+      }
+    });
+
+    // Call ended (by other party)
+    socketRef.current.on('call-ended', ({ from }) => {
+      if (from === userId) {
+        console.log('Received call-ended from other party');
+        alert(`${otherUser?.name} ended the call.`);
+        cleanupCall(); // Clean up local resources
+      }
+    });
+
+    // ICE candidate
+    socketRef.current.on('ice-candidate', async ({ candidate, from }) => {
+      if (from === userId && peerConnection) {
+        await peerConnection.addIceCandidate(new RTCIceCandidate(candidate));
+      }
+    });
+
+    // New messages
     socketRef.current.on('new message', (newMsg) => {
       if (
         (newMsg.sender._id === userId && newMsg.receiver._id === user._id) ||
         (newMsg.sender._id === user._id && newMsg.receiver._id === userId)
       ) {
         setMessages((prev) => {
-          // Avoid duplicate (in case of server re‑send)
           const exists = prev.some((msg) => msg._id === newMsg._id);
           if (exists) return prev;
           return [...prev, newMsg];
         });
       }
+
+      if (activeChatUserId !== newMsg.sender._id && newMsg.sender._id !== user._id) {
+        showNotification(
+          `New message from ${newMsg.sender.name}`,
+          newMsg.content || 'Sent a media file',
+          '/logo192.png',
+          `/chat/${newMsg.sender._id}`
+        );
+      }
     });
 
-    // Listen for message sent confirmation (our own messages)
     socketRef.current.on('message sent', (confirmedMsg) => {
       setMessages((prev) => {
-        // Avoid duplicate
         const exists = prev.some((msg) => msg._id === confirmedMsg._id);
         if (exists) return prev;
         return [...prev, confirmedMsg];
@@ -65,10 +177,11 @@ const Chat = () => {
       if (socketRef.current) {
         socketRef.current.disconnect();
       }
+      cleanupCall();
     };
-  }, [user?._id, userId]);
+  }, [user?._id, userId, otherUser?.name]);
 
-  // Load existing messages and user info
+  // Load messages and user info
   useEffect(() => {
     fetchOtherUser();
     fetchMessages();
@@ -116,10 +229,6 @@ const Chat = () => {
       if (file.type.startsWith('image/')) {
         return URL.createObjectURL(file);
       }
-      if (file.type.startsWith('video/')) {
-        // Optionally create a thumbnail later; for now just return null
-        return null;
-      }
       return null;
     });
 
@@ -140,14 +249,11 @@ const Chat = () => {
     if ((!newMessage.trim() && attachments.length === 0)) return;
 
     setSending(true);
-
-    // If there are attachments, use HTTP POST (file upload)
     if (attachments.length > 0) {
       const formData = new FormData();
       formData.append('receiverId', userId);
       formData.append('content', newMessage);
       attachments.forEach((file) => formData.append('attachments', file));
-
       try {
         const response = await API.post('/messages', formData, {
           headers: { 'Content-Type': 'multipart/form-data' },
@@ -168,7 +274,6 @@ const Chat = () => {
         setSending(false);
       }
     } else {
-      // Text message: send via socket – no optimistic message, rely on 'message sent' event
       const messageData = {
         senderId: user._id,
         receiverId: userId,
@@ -181,6 +286,153 @@ const Chat = () => {
     }
   };
 
+  // --- WebRTC Call Logic ---
+  const getMedia = async (type) => {
+    try {
+      const stream = await navigator.mediaDevices.getUserMedia({
+        audio: true,
+        video: type === 'video',
+      });
+      setLocalStream(stream);
+      return stream;
+    } catch (err) {
+      console.error('Error accessing media devices:', err);
+      alert('Could not access camera/microphone. Please check permissions.');
+      return null;
+    }
+  };
+
+  const createPeerConnection = () => {
+    const pc = new RTCPeerConnection({
+      iceServers: [{ urls: 'stun:stun.l.google.com:19302' }],
+    });
+
+    pc.onicecandidate = (event) => {
+      if (event.candidate) {
+        socketRef.current.emit('ice-candidate', {
+          candidate: event.candidate,
+          to: userId,
+          from: user._id,
+        });
+      }
+    };
+
+    pc.ontrack = (event) => {
+      setRemoteStream(event.streams[0]);
+    };
+
+    if (localStream) {
+      localStream.getTracks().forEach((track) => {
+        pc.addTrack(track, localStream);
+      });
+    }
+
+    return pc;
+  };
+
+  const initiateCall = async (type) => {
+    setCallType(type);
+    const stream = await getMedia(type);
+    if (!stream) return;
+
+    const pc = createPeerConnection();
+    setPeerConnection(pc);
+
+    const offer = await pc.createOffer();
+    await pc.setLocalDescription(offer);
+
+    socketRef.current.emit('call-user', {
+      offer: pc.localDescription,
+      to: userId,
+      from: user._id,
+      type,
+    });
+
+    setCallActive(true);
+  };
+
+  const acceptCall = async () => {
+    if (!incomingCall) return;
+    const { offer, from } = incomingCall;
+
+    const stream = await getMedia('video');
+    if (!stream) return;
+
+    const pc = createPeerConnection();
+    setPeerConnection(pc);
+
+    await pc.setRemoteDescription(new RTCSessionDescription(offer));
+    const answer = await pc.createAnswer();
+    await pc.setLocalDescription(answer);
+
+    socketRef.current.emit('accept-call', {
+      answer: pc.localDescription,
+      to: from,
+      from: user._id,
+    });
+
+    setCallActive(true);
+    setIncomingCall(null);
+  };
+
+  const acceptCallFromOffer = async (offer) => {
+    const stream = await getMedia('video');
+    if (!stream) return;
+
+    const pc = createPeerConnection();
+    setPeerConnection(pc);
+
+    await pc.setRemoteDescription(new RTCSessionDescription(offer));
+    const answer = await pc.createAnswer();
+    await pc.setLocalDescription(answer);
+
+    socketRef.current.emit('accept-call', {
+      answer: pc.localDescription,
+      to: userId,
+      from: user._id,
+    });
+
+    setCallActive(true);
+    setIncomingCall(null);
+  };
+
+  const rejectCall = () => {
+    if (incomingCall) {
+      socketRef.current.emit('reject-call', {
+        to: incomingCall.from,
+        from: user._id,
+      });
+      setIncomingCall(null);
+    }
+  };
+
+  const toggleMute = () => {
+    if (localStream) {
+      localStream.getAudioTracks().forEach(track => {
+        track.enabled = !track.enabled;
+      });
+      setIsMuted(!isMuted);
+    }
+  };
+
+  const toggleVideo = () => {
+    if (localStream) {
+      localStream.getVideoTracks().forEach(track => {
+        track.enabled = !track.enabled;
+      });
+      setIsVideoOff(!isVideoOff);
+    }
+  };
+
+  // Auto‑accept from global overlay
+  useEffect(() => {
+    if (incomingOffer && !callActive && !incomingCall) {
+      acceptCallFromOffer(incomingOffer);
+      window.history.replaceState({}, document.title);
+    }
+  }, [incomingOffer, callActive, incomingCall]);
+
+  // --- Render ---
   const getProfilePictureUrl = (profilePicture) => {
     if (profilePicture && profilePicture !== 'default-avatar.png') {
       return `http://localhost:5001/uploads/${profilePicture}`;
@@ -253,6 +505,14 @@ const Chat = () => {
           <p className="chat-user-details">
             {otherUser.age} years • {otherUser.gender}
           </p>
+        </div>
+        <div className="call-buttons">
+          <button onClick={() => initiateCall('audio')} className="call-btn audio-call">
+            📞 Audio
+          </button>
+          <button onClick={() => initiateCall('video')} className="call-btn video-call">
+            🎥 Video
+          </button>
         </div>
       </div>
 
@@ -346,7 +606,27 @@ const Chat = () => {
         </button>
       </form>
 
-      {/* Image Modal */}
+      {/* Call Modal */}
+      <CallModal
+        isOpen={callActive || incomingCall}
+        onClose={() => {
+          if (callActive || incomingCall) {
+            endCall();
+          }
+        }}
+        onAccept={acceptCall}
+        onReject={rejectCall}
+        callerName={otherUser?.name}
+        isIncoming={!!incomingCall}
+        localStream={localStream}
+        remoteStream={remoteStream}
+        isMuted={isMuted}
+        isVideoOff={isVideoOff}
+        onToggleMute={toggleMute}
+        onToggleVideo={toggleVideo}
+        onEndCall={endCall}
+      />
+
       {selectedImage && (
         <div className="image-modal" onClick={() => setSelectedImage(null)}>
           <div className="image-modal-content">

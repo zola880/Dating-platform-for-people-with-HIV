@@ -227,4 +227,20 @@ button:disabled {
   .grid > :nth-child(odd) {
     transform: translateY(0);
   }
+  /* Add bottom padding for mobile so content doesn't hide behind bottom nav */
+@media (max-width: 768px) {
+  .container {
+    padding-bottom: 70px;
+  }
+  /* For desktop, push main content to the right */
+@media (min-width: 769px) {
+  .main-content {
+    margin-left: 72px;   /* now matches the thin navbar width */
+  }
+  .container {
+    max-width: calc(1200px - 72px);
+    margin: 0 auto;
+  }
+}
+}
 }

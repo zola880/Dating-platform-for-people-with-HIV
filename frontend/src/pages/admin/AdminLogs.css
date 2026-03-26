@@ -1,0 +1,161 @@
+.admin-logs {
+  padding: 2rem;
+  max-width: 1400px;
+  margin: 0 auto;
+}
+
+.logs-filters {
+  margin-bottom: 2rem;
+}
+
+.logs-filters .search-input {
+  width: 100%;
+  max-width: 400px;
+  padding: 0.75rem 1rem;
+  border: 1px solid #ddd;
+  border-radius: 40px;
+  font-size: 0.9rem;
+}
+
+.logs-table-container {
+  background: white;
+  border-radius: 20px;
+  overflow-x: auto;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+}
+
+.logs-table {
+  width: 100%;
+  border-collapse: collapse;
+  min-width: 800px;
+}
+
+.logs-table th {
+  text-align: left;
+  padding: 1rem;
+  background: #f8f9fa;
+  color: #2C3E50;
+  font-weight: 600;
+  border-bottom: 1px solid #eee;
+}
+
+.logs-table td {
+  padding: 1rem;
+  border-bottom: 1px solid #eee;
+  vertical-align: top;
+}
+
+.logs-table tr:hover {
+  background: #f8f9fa;
+}
+
+.action-icon {
+  font-size: 1.2rem;
+  margin-right: 0.5rem;
+  display: inline-block;
+}
+
+.action-text {
+  font-weight: 500;
+  color: #2C3E50;
+}
+
+.admin-info,
+.target-info {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.admin-info strong,
+.target-info strong {
+  font-size: 0.9rem;
+  color: #2C3E50;
+}
+
+.admin-info small,
+.target-info small {
+  font-size: 0.7rem;
+  color: #7A8B9F;
+}
+
+.details-preview {
+  background: #f8f9fa;
+  padding: 0.5rem;
+  border-radius: 8px;
+  font-size: 0.7rem;
+  font-family: monospace;
+  margin: 0;
+  max-width: 300px;
+  overflow-x: auto;
+  white-space: pre-wrap;
+  word-break: break-all;
+}
+
+.no-target,
+.no-details {
+  color: #7A8B9F;
+  font-size: 0.85rem;
+}
+
+.date-info {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  white-space: nowrap;
+}
+
+.date-info strong {
+  font-size: 0.85rem;
+  color: #2C3E50;
+}
+
+.date-info small {
+  font-size: 0.7rem;
+  color: #7A8B9F;
+}
+
+.no-logs {
+  text-align: center;
+  padding: 3rem;
+  color: #7A8B9F;
+}
+
+.pagination {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 1rem;
+  margin-top: 2rem;
+  padding: 1rem;
+}
+
+.pagination button {
+  background: var(--coral, #FF6B6B);
+  color: white;
+  border: none;
+  padding: 0.5rem 1rem;
+  border-radius: 20px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.pagination button:hover:not(:disabled) {
+  background: #E55B5B;
+}
+
+.pagination button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.pagination span {
+  color: #2C3E50;
+  font-size: 0.9rem;
+}
+
+@media (max-width: 768px) {
+  .admin-logs {
+    padding: 1rem;
+  }
+}

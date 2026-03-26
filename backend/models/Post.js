@@ -28,13 +28,23 @@ const postSchema = new mongoose.Schema(
     },
     content: {
       type: String,
-      required: true,
+      default: '', // Changed from required to default empty string
       trim: true,
       maxlength: 2000,
     },
+    // Support both old and new field names for backward compatibility
     image: {
       type: String,
-      default: null, // file path or filename
+      default: null,
+    },
+    media: {
+      type: String,
+      default: null,
+    },
+    mediaType: {
+      type: String,
+      enum: ['image', 'video', 'none'],
+      default: 'none',
     },
     likes: [
       {

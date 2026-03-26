@@ -9,8 +9,12 @@ const path = require('path');
  */
 const createPost = async (req, res) => {
   try {
+    console.log('Create post request received');
+    console.log('Body:', req.body);
+    console.log('File:', req.file);
+
     const { content } = req.body;
-    // Allow image/video only if there is a file, otherwise require content
+
     if (!content && !req.file) {
       if (req.file) fs.unlinkSync(req.file.path);
       return res.status(400).json({ message: 'Post content or media is required' });
@@ -21,15 +25,15 @@ const createPost = async (req, res) => {
 
     if (req.file) {
       media = req.file.filename;
-      // Determine media type from mimetype
       mediaType = req.file.mimetype.startsWith('image/') ? 'image' : 'video';
     }
 
     const post = await Post.create({
       user: req.user._id,
-      content: content || '',   // empty string if no text
-      media,
-      mediaType,
+      content: content || '',
+      image: media,
+      media: media,
+      mediaType: mediaType,
     });
 
     const populatedPost = await Post.findById(post._id)
@@ -40,7 +44,6 @@ const createPost = async (req, res) => {
     res.status(201).json(populatedPost);
   } catch (error) {
     console.error('Create post error:', error);
-    // Delete uploaded file if error occurred
     if (req.file) {
       fs.unlink(req.file.path, (err) => {
         if (err) console.error('Error deleting file:', err);
@@ -49,6 +52,7 @@ const createPost = async (req, res) => {
     res.status(500).json({ message: 'Server error', error: error.message });
   }
 };
+
 
 /**
  * @desc    Get all posts (feed)
@@ -125,6 +129,7 @@ const updatePost = async (req, res) => {
         if (fs.existsSync(oldMediaPath)) fs.unlinkSync(oldMediaPath);
       }
       post.media = req.file.filename;
+      post.image = req.file.filename; // For backward compatibility
       post.mediaType = req.file.mimetype.startsWith('image/') ? 'image' : 'video';
     }
 

@@ -1,0 +1,166 @@
+.admin-announcements {
+  padding: 2rem;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.announcements-layout {
+  display: grid;
+  grid-template-columns: 1fr 1.5fr;
+  gap: 2rem;
+}
+
+.create-announcement {
+  background: white;
+  border-radius: 20px;
+  padding: 1.5rem;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+}
+
+.create-announcement h2 {
+  font-size: 1.3rem;
+  margin-bottom: 1.5rem;
+  color: #2C3E50;
+}
+
+.create-announcement .form-group {
+  margin-bottom: 1rem;
+}
+
+.create-announcement .form-group label {
+  display: block;
+  margin-bottom: 0.5rem;
+  font-weight: 500;
+  color: #2C3E50;
+}
+
+.create-announcement .form-group input,
+.create-announcement .form-group textarea,
+.create-announcement .form-group select {
+  width: 100%;
+  padding: 0.75rem;
+  border: 1px solid #ddd;
+  border-radius: 12px;
+  font-size: 0.9rem;
+  font-family: inherit;
+}
+
+.create-announcement .form-group textarea {
+  resize: vertical;
+}
+
+.create-announcement button {
+  background: var(--coral, #FF6B6B);
+  color: white;
+  border: none;
+  padding: 0.75rem 1.5rem;
+  border-radius: 40px;
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: all 0.2s;
+  width: 100%;
+}
+
+.create-announcement button:hover:not(:disabled) {
+  background: #E55B5B;
+  transform: translateY(-1px);
+}
+
+.create-announcement button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.announcements-list {
+  background: white;
+  border-radius: 20px;
+  padding: 1.5rem;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+}
+
+.announcements-list h2 {
+  font-size: 1.3rem;
+  margin-bottom: 1.5rem;
+  color: #2C3E50;
+}
+
+.announcement-card {
+  padding: 1rem;
+  border-bottom: 1px solid #eee;
+  transition: background 0.2s;
+}
+
+.announcement-card:last-child {
+  border-bottom: none;
+}
+
+.announcement-card:hover {
+  background: #f8f9fa;
+}
+
+.announcement-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 0.75rem;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.announcement-header h3 {
+  font-size: 1rem;
+  color: #2C3E50;
+  margin: 0;
+}
+
+.announcement-meta {
+  display: flex;
+  gap: 0.75rem;
+  align-items: center;
+}
+
+.audience-badge {
+  font-size: 0.7rem;
+  padding: 0.2rem 0.5rem;
+  background: #e8f5e9;
+  border-radius: 12px;
+  color: #2e7d32;
+}
+
+.announcement-date {
+  font-size: 0.7rem;
+  color: #7A8B9F;
+}
+
+.announcement-message {
+  color: #666;
+  line-height: 1.5;
+  margin-bottom: 0.5rem;
+  font-size: 0.9rem;
+}
+
+.announcement-footer {
+  font-size: 0.7rem;
+  color: #7A8B9F;
+}
+
+.no-announcements {
+  text-align: center;
+  color: #7A8B9F;
+  padding: 2rem;
+}
+
+@media (max-width: 768px) {
+  .admin-announcements {
+    padding: 1rem;
+  }
+  
+  .announcements-layout {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+  }
+  
+  .announcement-header {
+    flex-direction: column;
+  }
+}

@@ -1,0 +1,132 @@
+.call-modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.9);
+  z-index: 10000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.call-modal {
+  background: #1a1a2e;
+  border-radius: 20px;
+  width: 90%;
+  max-width: 800px;
+  overflow: hidden;
+}
+
+/* Incoming call */
+.incoming-call {
+  padding: 2rem;
+  text-align: center;
+}
+
+.caller-info {
+  margin-bottom: 2rem;
+}
+
+.caller-avatar {
+  font-size: 4rem;
+  margin-bottom: 1rem;
+}
+
+.caller-info h3 {
+  color: white;
+  font-size: 1.2rem;
+}
+
+.call-actions {
+  display: flex;
+  gap: 1rem;
+  justify-content: center;
+}
+
+.accept-btn {
+  background: #4CAF50;
+  color: white;
+  border: none;
+  padding: 0.75rem 2rem;
+  border-radius: 40px;
+  font-size: 1rem;
+  cursor: pointer;
+}
+
+.reject-btn {
+  background: #f44336;
+  color: white;
+  border: none;
+  padding: 0.75rem 2rem;
+  border-radius: 40px;
+  font-size: 1rem;
+  cursor: pointer;
+}
+
+/* Active call */
+.active-call {
+  position: relative;
+}
+
+.video-container {
+  position: relative;
+  background: #000;
+  min-height: 400px;
+}
+
+.remote-video {
+  width: 100%;
+  height: auto;
+  background: #000;
+}
+
+.local-video {
+  position: absolute;
+  bottom: 20px;
+  right: 20px;
+  width: 120px;
+  height: 90px;
+  border-radius: 8px;
+  border: 2px solid white;
+  object-fit: cover;
+}
+
+.call-controls {
+  display: flex;
+  justify-content: center;
+  gap: 1rem;
+  padding: 1rem;
+  background: #1a1a2e;
+}
+
+.call-controls button {
+  background: #2c2c3e;
+  color: white;
+  border: none;
+  padding: 0.5rem 1rem;
+  border-radius: 40px;
+  cursor: pointer;
+  font-size: 0.9rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.call-controls button.active {
+  background: #f44336;
+}
+
+.end-call-btn {
+  background: #f44336 !important;
+}
+
+@media (max-width: 768px) {
+  .local-video {
+    width: 80px;
+    height: 60px;
+    bottom: 10px;
+    right: 10px;
+  }
+}

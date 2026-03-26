@@ -1,0 +1,175 @@
+.admin-dashboard {
+  padding: 2rem;
+  max-width: 1400px;
+  margin: 0 auto;
+}
+
+.admin-header {
+  margin-bottom: 2rem;
+}
+
+.admin-header h1 {
+  font-size: 1.8rem;
+  color: #2C3E50;
+  margin-bottom: 0.5rem;
+}
+
+.admin-header p {
+  color: #7A8B9F;
+}
+
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: 1.5rem;
+  margin-bottom: 2rem;
+}
+
+.stat-card {
+  background: white;
+  border-radius: 20px;
+  padding: 1.2rem;
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+  border-top: 3px solid;
+  transition: transform 0.2s;
+}
+
+.stat-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+}
+
+.stat-icon {
+  font-size: 2rem;
+  background: #FEF9E6;
+  width: 50px;
+  height: 50px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 16px;
+}
+
+.stat-info h3 {
+  font-size: 0.85rem;
+  color: #7A8B9F;
+  margin-bottom: 0.25rem;
+}
+
+.stat-value {
+  font-size: 1.5rem;
+  font-weight: bold;
+  color: #2C3E50;
+}
+
+.recent-section {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 2rem;
+}
+
+.recent-users,
+.recent-posts {
+  background: white;
+  border-radius: 20px;
+  padding: 1.5rem;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+}
+
+.recent-users h2,
+.recent-posts h2 {
+  font-size: 1.2rem;
+  margin-bottom: 1rem;
+  color: #2C3E50;
+}
+
+.recent-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.recent-table th {
+  text-align: left;
+  padding: 0.75rem 0.5rem;
+  border-bottom: 1px solid #eee;
+  color: #7A8B9F;
+  font-weight: 500;
+  font-size: 0.85rem;
+}
+
+.recent-table td {
+  padding: 0.75rem 0.5rem;
+  border-bottom: 1px solid #eee;
+  font-size: 0.85rem;
+}
+
+.role-badge {
+  padding: 0.2rem 0.5rem;
+  border-radius: 20px;
+  font-size: 0.7rem;
+  font-weight: 500;
+}
+
+.role-badge.user { background: #e0e0e0; color: #666; }
+.role-badge.moderator { background: #FFE66D; color: #8B6B00; }
+.role-badge.admin { background: #FF6B6B; color: white; }
+.role-badge.superadmin { background: #9b59b6; color: white; }
+
+.status-badge {
+  padding: 0.2rem 0.5rem;
+  border-radius: 20px;
+  font-size: 0.7rem;
+  font-weight: 500;
+}
+
+.status-badge.active { background: #d4edda; color: #155724; }
+.status-badge.suspended { background: #fff3cd; color: #856404; }
+.status-badge.banned { background: #f8d7da; color: #721c24; }
+
+.recent-post {
+  padding: 0.75rem 0;
+  border-bottom: 1px solid #eee;
+}
+
+.recent-post:last-child {
+  border-bottom: none;
+}
+
+.post-user {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 0.5rem;
+  font-size: 0.85rem;
+}
+
+.post-user strong {
+  color: #2C3E50;
+}
+
+.post-user span {
+  color: #7A8B9F;
+  font-size: 0.75rem;
+}
+
+.post-content-preview {
+  color: #666;
+  font-size: 0.85rem;
+  line-height: 1.4;
+}
+
+@media (max-width: 768px) {
+  .admin-dashboard {
+    padding: 1rem;
+  }
+  
+  .stats-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  
+  .recent-section {
+    grid-template-columns: 1fr;
+  }
+}

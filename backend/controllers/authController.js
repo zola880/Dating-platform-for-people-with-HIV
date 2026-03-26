@@ -66,6 +66,7 @@ const registerUser = async (req, res) => {
       gender: user.gender,
       bio: user.bio,
       profilePicture: user.profilePicture,
+      role: user.role, // 👈 Added role
       token: generateToken(user._id),
     });
   } catch (error) {
@@ -111,6 +112,7 @@ const loginUser = async (req, res) => {
       gender: user.gender,
       bio: user.bio,
       profilePicture: user.profilePicture,
+      role: user.role, // 👈 Added role
       token: generateToken(user._id),
     });
   } catch (error) {

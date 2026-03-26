@@ -2,7 +2,8 @@ import axios from 'axios';
 
 // Create axios instance with base URL
 const API = axios.create({
-baseURL: 'https://dating-platform-for-people-with-hiv.onrender.com/api',
+// baseURL: 'https://dating-platform-for-people-with-hiv.onrender.com/api',this is for atlas 
+baseURL: 'http://localhost:5001/api',
   headers: {
     'Content-Type': 'application/json',
   },

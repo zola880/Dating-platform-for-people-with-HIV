@@ -48,7 +48,27 @@ const userSchema = new mongoose.Schema(
     profilePicture: {
       type: String,
       default: 'default-avatar.png', // Default profile picture filename
-    },
+    },role: {
+  type: String,
+  enum: ['user', 'moderator', 'admin', 'superadmin'],
+  default: 'user',
+},
+status: {
+  type: String,
+  enum: ['active', 'suspended', 'banned'],
+  default: 'active',
+},
+suspendedUntil: {
+  type: Date,
+  default: null,
+},
+reports: [{
+  reportedBy: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
+  reason: String,
+  description: String,
+  createdAt: { type: Date, default: Date.now },
+  resolved: { type: Boolean, default: false },
+}],
   },
   {
     timestamps: true, // Automatically adds createdAt and updatedAt fields

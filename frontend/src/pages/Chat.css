@@ -374,4 +374,32 @@
   .chat-messages {
     padding: 1rem;
   }
+  .call-buttons {
+  display: flex;
+  gap: 0.5rem;
+  margin-left: auto;
+}
+
+.call-btn {
+  background: #2C3E50;
+  color: white;
+  border: none;
+  border-radius: 40px;
+  padding: 0.5rem 1rem;
+  font-size: 0.8rem;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.call-btn:hover {
+  background: #FF6B6B;
+}
+
+.audio-call {
+  background: #4CAF50;
+}
+
+.video-call {
+  background: #2196F3;
+}
 }
