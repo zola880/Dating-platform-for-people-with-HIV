@@ -1,6 +1,7 @@
 import React, { createContext, useContext, useEffect, useRef, useState } from 'react';
 import { useAuth } from './AuthContext';
 import io from 'socket.io-client';
+import config from '../utils/config';
 
 const SocketContext = createContext();
 
@@ -20,7 +21,7 @@ export const SocketProvider = ({ children }) => {
       return;
     }
 
-    const newSocket = io('http://localhost:5001');
+    const newSocket = io(config.SOCKET_URL);
     socketRef.current = newSocket;
     setSocket(newSocket);
 

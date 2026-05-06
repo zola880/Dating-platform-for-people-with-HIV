@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { getAllUsers, deletePostAdmin, deleteCommentAdmin } from '../../utils/adminApi';
+import config from '../../utils/config';
 import Spinner from '../../components/Spinner';
 import './AdminModeration.css';
 
@@ -81,7 +82,7 @@ const AdminModeration = () => {
           <div key={user._id} className="moderation-user-card">
             <div className="moderation-user-header" onClick={() => setSelectedUser(selectedUser === user._id ? null : user._id)}>
               <img
-                src={user.profilePicture ? `http://localhost:5001/uploads/${user.profilePicture}` : '/default-avatar.png'}
+                src={user.profilePicture ? config.getUploadUrl(user.profilePicture) : '/default-avatar.png'}
                 alt={user.name}
                 className="user-avatar"
               />
@@ -112,9 +113,9 @@ const AdminModeration = () => {
                         {post.media && (
                           <div className="post-media-preview">
                             {post.mediaType === 'image' ? (
-                              <img src={`http://localhost:5001/uploads/${post.media}`} alt="Post media" />
+                              <img src={config.getUploadUrl(post.media)} alt="Post media" />
                             ) : post.mediaType === 'video' ? (
-                              <video controls src={`http://localhost:5001/uploads/${post.media}`} />
+                              <video controls src={config.getUploadUrl(post.media)} />
                             ) : null}
                           </div>
                         )}

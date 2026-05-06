@@ -2,6 +2,7 @@
 import React, { createContext, useContext, useEffect, useRef, useState } from 'react';
 import { useAuth } from './AuthContext';
 import io from 'socket.io-client';
+import config from '../utils/config';
 import { requestNotificationPermission, showNotification } from '../utils/notifications';
 import API from '../utils/api';
 
@@ -21,7 +22,7 @@ export const NotificationProvider = ({ children }) => {
     requestNotificationPermission();
 
     // Connect to socket
-    const newSocket = io('http://localhost:5001');
+    const newSocket = io(config.SOCKET_URL);
     socketRef.current = newSocket;
     setSocket(newSocket);
 

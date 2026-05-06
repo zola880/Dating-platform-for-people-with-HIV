@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { useAuth } from '../context/AuthContext';
+import config from '../utils/config';
 import Spinner from '../components/Spinner';
 import './Profile.css';
 
@@ -10,6 +11,7 @@ const Profile = () => {
     name: user?.name || '',
     age: user?.age || '',
     gender: user?.gender || '',
+    lookingFor: user?.lookingFor?.[0] || '', // convert array to string for select
     bio: user?.bio || '',
     profilePicture: null,
   });
@@ -20,7 +22,7 @@ const Profile = () => {
 
   const getProfilePictureUrl = () => {
     if (user?.profilePicture && user.profilePicture !== 'default-avatar.png') {
-      return `http://localhost:5001/uploads/${user.profilePicture}`;
+      return config.getUploadUrl(user.profilePicture);
     }
     return '/default-avatar.png';
   };
@@ -64,6 +66,15 @@ const Profile = () => {
     setLoading(false);
   };
 
+  // Helper to format lookingFor display
+  const formatLookingFor = () => {
+    if (!user?.lookingFor || user.lookingFor.length === 0) return 'Anyone';
+    if (user.lookingFor[0] === 'Any') return 'Anyone';
+    if (user.lookingFor[0] === 'Male') return 'Men';
+    if (user.lookingFor[0] === 'Female') return 'Women';
+    return user.lookingFor[0];
+  };
+
   if (!user) {
     return <Spinner />;
   }
@@ -71,7 +82,6 @@ const Profile = () => {
   return (
     <div className="profile-page">
       <div className="profile-cover">
-        {/* Optional cover photo – you can add later */}
         <div className="cover-placeholder"></div>
       </div>
 
@@ -98,6 +108,9 @@ const Profile = () => {
             {user.age} years • {user.gender}
           </p>
           <p className="profile-bio">{user.bio || 'No bio yet. Add one!'}</p>
+          <p className="profile-looking-for">
+            <strong>Interested in:</strong> {formatLookingFor()}
+          </p>
           <div className="profile-stats">
             <div className="stat">
               <span className="stat-value">0</span>
@@ -184,6 +197,9 @@ const Profile = () => {
                   </select>
                 </div>
               </div>
+
+              
+               
 
               <div className="form-group">
                 <label>Bio</label>

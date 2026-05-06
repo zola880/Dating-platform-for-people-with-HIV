@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { useParams, useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import API from '../utils/api';
+import config from '../utils/config';
 import Spinner from '../components/Spinner';
 import CallModal from '../components/CallModal';
 import { requestNotificationPermission, showNotification } from '../utils/notifications';
@@ -89,7 +90,7 @@ const Chat = () => {
 
   // Socket connection
   useEffect(() => {
-    socketRef.current = io('http://localhost:5001');
+    socketRef.current = io(config.SOCKET_URL);
     if (user?._id) {
       socketRef.current.emit('join', user._id);
     }
@@ -435,7 +436,7 @@ const Chat = () => {
   // --- Render ---
   const getProfilePictureUrl = (profilePicture) => {
     if (profilePicture && profilePicture !== 'default-avatar.png') {
-      return `http://localhost:5001/uploads/${profilePicture}`;
+      return config.getUploadUrl(profilePicture);
     }
     return '/default-avatar.png';
   };
@@ -451,7 +452,7 @@ const Chat = () => {
   };
 
   const renderAttachment = (attachment) => {
-    const url = `http://localhost:5001/uploads/${attachment.filename}`;
+    const url = config.getUploadUrl(attachment.filename);
     if (attachment.fileType === 'image') {
       return (
         <div className="message-attachment">

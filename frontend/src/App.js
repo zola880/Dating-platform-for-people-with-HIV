@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import { AuthProvider } from './context/AuthContext';
 import { SocketProvider } from './context/SocketContext';
@@ -37,13 +37,28 @@ const AdminLayout = ({ children }) => (
 );
 
 function App() {
+  const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
+
+  // Apply sidebar-collapsed class to body when sidebar is collapsed
+  useEffect(() => {
+    if (sidebarCollapsed) {
+      document.body.classList.add('sidebar-collapsed');
+    } else {
+      document.body.classList.remove('sidebar-collapsed');
+    }
+  }, [sidebarCollapsed]);
+
   return (
     <AuthProvider>
       <SocketProvider>
         <NotificationProvider>
           <Router>
             <CallProvider>  {/* Now inside Router */}
-              <VerticalNavbar />
+              <VerticalNavbar
+                collapsed={sidebarCollapsed}
+                onToggleCollapse={setSidebarCollapsed}
+              />
+              <BottomNav />
               <div className="main-content">
                 <div className="container">
                   <Routes>

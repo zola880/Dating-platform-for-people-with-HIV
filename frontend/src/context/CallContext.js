@@ -4,6 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import { useAuth } from './AuthContext';
 import { useSocket } from './SocketContext';
 import API from '../utils/api';
+import config from '../utils/config';
 import { showNotification } from '../utils/notifications';
 
 const CallContext = createContext();
@@ -167,7 +168,7 @@ export const CallProvider = ({ children }) => {
       showNotification(
         'Incoming call',
         `${caller.name} is calling you`,
-        caller.profilePicture ? `http://localhost:5001/uploads/${caller.profilePicture}` : '/logo192.png',
+        caller.profilePicture ? config.getUploadUrl(caller.profilePicture) : '/logo192.png',
         `/chat/${from}`
       );
     };

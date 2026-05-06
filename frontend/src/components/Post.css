@@ -1,46 +1,55 @@
-/* Post Card - Embrace Social Style */
-.post {
-  background: white;
-  border-radius: 20px;
-  margin-bottom: 1rem;
-  overflow: hidden;
-  transition: all 0.2s ease;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
-  border: 1px solid rgba(0, 0, 0, 0.05);
+/* Post.css */
+.post-wrapper {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 24px;
+  max-width: 1100px;
+  width: 100%;
+  margin: 0 auto;
 }
 
-.post:hover {
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
-  transform: translateY(-2px);
+/* Post Card */
+.post-card {
+  flex: 0 0 540px;
+  background: white;
+  border-radius: 28px;
+  overflow: hidden;
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.08);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 0;
+}
+
+.post-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 20px 35px rgba(0, 0, 0, 0.12);
 }
 
 /* Header */
 .post-header {
   display: flex;
   align-items: center;
-  padding: 1rem 1rem 0.5rem;
-  position: relative;
+  gap: 12px;
+  padding: 14px 18px 8px;
+  background: white;
 }
 
 .post-avatar {
-  width: 48px;
-  height: 48px;
+  width: 44px;
+  height: 44px;
   border-radius: 50%;
   object-fit: cover;
-  margin-right: 0.75rem;
   border: 2px solid white;
-  box-shadow: 0 2px 4px rgba(0,0,0,0.05);
-}
-
-.post-user-info {
-  flex: 1;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
 }
 
 .post-user-info h4 {
-  margin: 0;
   font-size: 1rem;
   font-weight: 600;
   color: #2C3E50;
+  margin: 0;
 }
 
 .post-date {
@@ -51,14 +60,15 @@
 }
 
 .post-delete {
+  margin-left: auto;
   background: none;
   border: none;
-  font-size: 0.9rem;
+  font-size: 0.85rem;
   color: #7A8B9F;
   cursor: pointer;
-  padding: 0.25rem 0.5rem;
-  border-radius: 20px;
-  transition: background 0.2s;
+  padding: 4px 8px;
+  border-radius: 30px;
+  transition: all 0.2s;
 }
 
 .post-delete:hover {
@@ -68,29 +78,36 @@
 
 /* Content */
 .post-content {
-  padding: 0 1rem 0.75rem;
+  padding: 0 18px 12px;
 }
 
 .post-content p {
-  margin: 0 0 0.75rem;
+  margin: 0 0 10px;
   font-size: 0.95rem;
-  line-height: 1.5;
+  line-height: 1.45;
   color: #2C3E50;
   word-break: break-word;
 }
 
 .post-media {
-  margin-top: 0.5rem;
-  border-radius: 16px;
+  margin-top: 6px;
+  border-radius: 20px;
   overflow: hidden;
-  background: #f8f9fa;
+  background: #F8F9FC;
   text-align: center;
 }
 
-.post-image {
+.post-image,
+.post-video {
   max-width: 100%;
   max-height: 500px;
   object-fit: contain;
+  width: auto;
+  display: block;
+  margin: 0 auto;
+}
+
+.post-image {
   cursor: pointer;
   transition: transform 0.2s;
 }
@@ -99,65 +116,54 @@
   transform: scale(1.01);
 }
 
-.post-video {
-  max-width: 100%;
-  max-height: 400px;
-  border-radius: 12px;
-}
-
-/* Actions */
+/* Actions inside card (like, comment) */
 .post-actions {
   display: flex;
   align-items: center;
-  gap: 1.5rem;
-  padding: 0.5rem 1rem 0.75rem;
+  gap: 1.2rem;
+  padding: 6px 18px 12px;
   border-top: 1px solid #f0f0f0;
-  margin-top: 0.25rem;
 }
 
 .post-actions button {
   background: none;
   border: none;
-  display: flex;
+  display: inline-flex;
   align-items: center;
-  gap: 0.5rem;
-  font-size: 0.9rem;
+  gap: 6px;
+  font-size: 0.85rem;
   font-weight: 500;
   color: #5A6B7C;
   cursor: pointer;
-  padding: 0.25rem 0.5rem;
+  padding: 4px 8px;
   border-radius: 40px;
   transition: all 0.2s;
 }
 
 .post-actions button:hover {
-  background: #f8f9fa;
+  background: #FFF5F5;
   color: #FF6B6B;
 }
 
 .like-btn {
-  color: #e74c3c;
+  color: #FF6B6B;
 }
 
-.like-btn span {
-  margin-left: 0.25rem;
-}
-
-/* Comments Section */
+/* Comments */
 .post-comments {
-  padding: 0 1rem 1rem;
+  padding: 0 18px 16px;
   border-top: 1px solid #f0f0f0;
-  background: #fefefe;
+  background: #FEFAF5;
 }
 
 .comment {
   display: flex;
-  align-items: flex-start;
-  gap: 0.5rem;
-  margin-top: 0.75rem;
-  padding: 0.5rem;
-  background: #f9f9f9;
-  border-radius: 16px;
+  gap: 8px;
+  margin-top: 12px;
+  padding: 8px 12px;
+  background: white;
+  border-radius: 20px;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.02);
 }
 
 .comment-avatar {
@@ -177,7 +183,7 @@
 }
 
 .comment-content p {
-  margin: 0.2rem 0 0.2rem;
+  margin: 4px 0;
   font-size: 0.85rem;
   color: #3A4B5C;
   word-break: break-word;
@@ -195,30 +201,29 @@
   border: none;
   color: #7A8B9F;
   cursor: pointer;
-  font-size: 0.8rem;
+  font-size: 0.75rem;
   padding: 0 4px;
   border-radius: 12px;
 }
 
 .comment-delete:hover {
-  color: #e74c3c;
-  background: #FEF2F2;
+  color: #FF6B6B;
+  background: #FFF5F5;
 }
 
-/* Add Comment Form */
 .add-comment {
   display: flex;
-  gap: 0.5rem;
-  margin-top: 0.75rem;
+  gap: 10px;
+  margin-top: 12px;
   align-items: center;
 }
 
 .add-comment input {
   flex: 1;
-  padding: 0.5rem 0.75rem;
+  padding: 8px 14px;
   border: 1px solid #E2E8F0;
   border-radius: 40px;
-  font-size: 0.85rem;
+  font-size: 0.8rem;
   outline: none;
   transition: border-color 0.2s;
 }
@@ -232,8 +237,8 @@
   color: white;
   border: none;
   border-radius: 40px;
-  padding: 0.4rem 1rem;
-  font-size: 0.8rem;
+  padding: 6px 16px;
+  font-size: 0.75rem;
   cursor: pointer;
   transition: background 0.2s;
 }
@@ -247,14 +252,97 @@
   cursor: not-allowed;
 }
 
-/* Image Modal (for enlarged images) */
+/* Side Actions */
+.post-actions-side {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 20px;
+  width: 80px;
+}
+
+.action-profile {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 12px;
+}
+
+.action-avatar {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 2px solid white;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+}
+
+.action-username {
+  font-size: 0.8rem;
+  font-weight: 500;
+  color: #2C3E50;
+  text-align: center;
+  max-width: 70px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.follow-btn {
+  background: #FF6B6B;
+  color: white;
+  border: none;
+  border-radius: 40px;
+  padding: 4px 12px;
+  font-size: 0.7rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s;
+  width: 100%;
+}
+
+.follow-btn.following {
+  background: #E2E8F0;
+  color: #2C3E50;
+}
+
+.follow-btn:hover {
+  background: #E55B5B;
+  transform: translateY(-1px);
+}
+
+.action-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  cursor: pointer;
+  transition: transform 0.2s;
+}
+
+.action-item:hover {
+  transform: scale(1.05);
+}
+
+.action-icon {
+  font-size: 1.8rem;
+}
+
+.action-count {
+  font-size: 0.7rem;
+  font-weight: 500;
+  color: #5A6B7C;
+}
+
+/* Image Modal */
 .image-modal {
   position: fixed;
   top: 0;
   left: 0;
   right: 0;
   bottom: 0;
-  background: rgba(0,0,0,0.9);
+  background: rgba(0, 0, 0, 0.9);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -289,33 +377,58 @@
 
 /* Responsive */
 @media (max-width: 768px) {
+  .post-wrapper {
+    flex-direction: column;
+    gap: 12px;
+    padding: 0 12px;
+  }
+  .post-card {
+    flex: 0 0 auto;
+    width: 100%;
+    max-width: 100%;
+  }
+  .post-actions-side {
+    flex-direction: row;
+    justify-content: space-between;
+    width: 100%;
+    padding: 0 20px;
+    gap: 12px;
+  }
+  .action-profile {
+    flex-direction: row;
+    gap: 12px;
+  }
+  .action-avatar {
+    width: 36px;
+    height: 36px;
+  }
+  .action-username {
+    display: none;
+  }
+  .follow-btn {
+    width: auto;
+    padding: 4px 12px;
+  }
   .post-header {
-    padding: 0.75rem 0.75rem 0.25rem;
+    padding: 10px 12px 6px;
   }
-
   .post-avatar {
-    width: 40px;
-    height: 40px;
+    width: 36px;
+    height: 36px;
   }
-
   .post-content {
-    padding: 0 0.75rem 0.5rem;
+    padding: 0 12px 8px;
   }
-
   .post-actions {
-    gap: 1rem;
-    padding: 0.25rem 0.75rem 0.5rem;
+    padding: 4px 12px 10px;
   }
-
   .post-actions button {
-    font-size: 0.8rem;
+    font-size: 0.75rem;
   }
-
   .post-comments {
-    padding: 0 0.75rem 0.75rem;
+    padding: 0 12px 12px;
   }
-
-  .add-comment {
-    gap: 0.25rem;
+  .comment {
+    padding: 6px 10px;
   }
 }

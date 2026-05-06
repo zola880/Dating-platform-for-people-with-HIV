@@ -1,5 +1,6 @@
 import React from 'react';
 import { useCall } from '../context/CallContext';
+import config from '../utils/config';
 import './GlobalCallOverlay.css';
 
 const GlobalCallOverlay = () => {
@@ -12,7 +13,7 @@ const GlobalCallOverlay = () => {
       <div className="call-card">
         <div className="caller-avatar">
           {callerInfo?.profilePicture ? (
-            <img src={`http://localhost:5001/uploads/${callerInfo.profilePicture}`} alt={callerInfo.name} />
+            <img src={config.getUploadUrl(callerInfo.profilePicture)} alt={callerInfo.name} />
           ) : (
             <div className="default-avatar">📞</div>
           )}

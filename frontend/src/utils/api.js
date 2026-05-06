@@ -1,9 +1,10 @@
 import axios from 'axios';
 
+const baseURL = process.env.REACT_APP_API_URL || (process.env.NODE_ENV === 'development' ? 'http://localhost:5001/api' : '/api');
+
 // Create axios instance with base URL
 const API = axios.create({
-// baseURL: 'https://dating-platform-for-people-with-hiv.onrender.com/api',this is for atlas 
-baseURL: 'http://localhost:5001/api',
+  baseURL,
   headers: {
     'Content-Type': 'application/json',
   },

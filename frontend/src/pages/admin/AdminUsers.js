@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { getAllUsers, updateUserStatus, deleteUser, assignRole } from '../../utils/adminApi';
 import { useAuth } from '../../context/AuthContext';
+import config from '../../utils/config';
 import Spinner from '../../components/Spinner';
 import './AdminUsers.css';
 
@@ -123,7 +124,7 @@ const AdminUsers = () => {
                 <td>
                   <div className="user-cell">
                     <img
-                      src={user.profilePicture ? `http://localhost:5001/uploads/${user.profilePicture}` : '/default-avatar.png'}
+                      src={user.profilePicture ? config.getUploadUrl(user.profilePicture) : '/default-avatar.png'}
                       alt={user.name}
                       className="user-avatar-small"
                     />

@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import API from '../utils/api';
+import config from '../utils/config';
 import Spinner from '../components/Spinner';
 import './Messages.css';
 
@@ -31,7 +32,7 @@ const Messages = () => {
 
   const getProfilePictureUrl = (profilePicture) => {
     if (profilePicture && profilePicture !== 'default-avatar.png') {
-      return `http://localhost:5001/uploads/${profilePicture}`;
+      return config.getUploadUrl(profilePicture);
     }
     return '/default-avatar.png';
   };

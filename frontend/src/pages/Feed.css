@@ -1,94 +1,181 @@
-/* Feed.css - Embrace Brand */
-
-.feed.embrace-feed {
-  max-width: 700px;
-  margin: 0 auto;
-  padding: 1rem;
+/* Feed.css */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
 }
 
-/* Create Post Card */
-.create-post-card {
-  background: white;
-  border-radius: 28px;
-  padding: 1.5rem;
-  margin-bottom: 2rem;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.05);
-  border: 1px solid rgba(0,0,0,0.05);
+.tiktok-feed {
+  position: relative;
+  height: 100vh;
+  width: 100%;
+  overflow-y: scroll;
+  scroll-snap-type: y mandatory;
+  scroll-behavior: smooth;
+  background: #FEF9E6;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
 }
 
-.create-post-header {
+.tiktok-feed::-webkit-scrollbar {
+  display: none;
+}
+
+.tiktok-post-container {
+  scroll-snap-align: start;
+  scroll-snap-stop: always;
+  height: 100vh;
+  width: 100%;
   display: flex;
   align-items: center;
-  gap: 0.75rem;
-  margin-bottom: 1rem;
+  justify-content: center;
 }
 
-.user-avatar {
-  width: 48px;
-  height: 48px;
+/* Floating create button */
+.create-post-float {
+  position: fixed;
+  bottom: 80px;
+  right: 24px;
+  width: 56px;
+  height: 56px;
   border-radius: 50%;
-  object-fit: cover;
+  background: #FF6B6B;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: none;
+  cursor: pointer;
+  z-index: 100;
+  box-shadow: 0 4px 12px rgba(255, 107, 107, 0.3);
+  transition: all 0.2s ease;
 }
 
-.create-post-header h3 {
-  font-size: 1rem;
+.create-post-float:hover {
+  transform: scale(1.05);
+  background: #E55B5B;
+  box-shadow: 0 6px 16px rgba(255, 107, 107, 0.4);
+}
+
+/* Modal for creating post */
+.create-post-modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  backdrop-filter: blur(8px);
+  background: rgba(0, 0, 0, 0.5);
+  animation: fadeIn 0.2s ease;
+}
+
+.create-post-modal-backdrop {
+  position: absolute;
+  inset: 0;
+  cursor: pointer;
+}
+
+.create-post-modal-content {
+  position: relative;
+  background: white;
+  border-radius: 32px;
+  width: 90%;
+  max-width: 540px;
+  padding: 28px;
+  box-shadow: 0 20px 35px rgba(0, 0, 0, 0.2);
+  animation: slideUp 0.3s cubic-bezier(0.2, 0.9, 0.4, 1.1);
+}
+
+.modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.modal-header h3 {
+  font-size: 1.5rem;
+  font-weight: 600;
   color: #2C3E50;
   margin: 0;
 }
 
-.create-post-card textarea {
+.close-modal {
+  background: none;
+  border: none;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  color: #7A8B9F;
+  transition: all 0.2s;
+}
+
+.close-modal:hover {
+  background: #F5F5F5;
+  color: #FF6B6B;
+  transform: rotate(90deg);
+}
+
+.post-textarea {
   width: 100%;
-  padding: 0.75rem;
   border: 1px solid #E2E8F0;
-  border-radius: 20px;
-  font-size: 0.95rem;
+  border-radius: 24px;
+  padding: 14px 16px;
+  font-size: 1rem;
   font-family: inherit;
   resize: vertical;
-  margin-bottom: 1rem;
   transition: border-color 0.2s;
 }
 
-.create-post-card textarea:focus {
+.post-textarea:focus {
   outline: none;
   border-color: #FF6B6B;
 }
 
 .media-upload {
-  margin-bottom: 1rem;
+  margin: 20px 0;
 }
 
 .upload-btn {
   display: inline-flex;
   align-items: center;
-  gap: 0.5rem;
-  background: #F1F5F9;
-  padding: 0.5rem 1rem;
+  gap: 8px;
+  background: #F5F5F5;
+  padding: 10px 20px;
   border-radius: 40px;
-  font-size: 0.85rem;
   cursor: pointer;
+  color: #5A6B7C;
+  font-weight: 500;
   transition: background 0.2s;
 }
 
 .upload-btn:hover {
-  background: #E2E8F0;
+  background: #FF6B6B;
+  color: white;
 }
 
 .preview-container {
+  margin-top: 12px;
   position: relative;
-  margin-top: 0.75rem;
+  border-radius: 20px;
+  overflow: hidden;
+  max-height: 200px;
+  background: #F5F5F5;
   display: inline-block;
 }
 
-.preview-image {
+.preview-container img,
+.preview-container video {
   max-width: 100%;
-  max-height: 200px;
-  border-radius: 16px;
-  border: 1px solid #E2E8F0;
-}
-
-.preview-video {
-  max-width: 100%;
-  max-height: 200px;
+  max-height: 180px;
+  object-fit: cover;
   border-radius: 16px;
 }
 
@@ -96,90 +183,165 @@
   position: absolute;
   top: 8px;
   right: 8px;
-  background: rgba(0,0,0,0.6);
-  color: white;
+  background: rgba(0, 0, 0, 0.6);
+  backdrop-filter: blur(4px);
   border: none;
-  border-radius: 50%;
   width: 28px;
   height: 28px;
-  font-size: 14px;
-  cursor: pointer;
+  border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
+  cursor: pointer;
+  color: white;
   transition: background 0.2s;
 }
 
 .remove-preview:hover {
-  background: #e74c3c;
+  background: #FF6B6B;
 }
 
-.post-submit {
+.modal-actions {
+  margin-top: 24px;
+}
+
+.post-submit-btn {
+  width: 100%;
+  padding: 12px;
   background: #FF6B6B;
-  color: white;
   border: none;
   border-radius: 40px;
-  padding: 0.6rem 1.2rem;
-  font-weight: 500;
+  color: white;
+  font-weight: 600;
+  font-size: 1rem;
   cursor: pointer;
   transition: all 0.2s;
-  width: 100%;
 }
 
-.post-submit:hover:not(:disabled) {
+.post-submit-btn:hover:not(:disabled) {
   background: #E55B5B;
-  transform: translateY(-1px);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(255, 107, 107, 0.3);
 }
 
-.post-submit:disabled {
-  background: #CBD5E1;
+.post-submit-btn:disabled {
+  opacity: 0.6;
   cursor: not-allowed;
+  transform: none;
 }
 
-/* Posts Feed */
-.posts-feed {
+.btn-spinner {
+  display: inline-block;
+  width: 20px;
+  height: 20px;
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  border-top-color: white;
+  border-radius: 50%;
+  animation: spin 0.6s linear infinite;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+.error-message-tiktok {
+  position: fixed;
+  top: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: #FFEBEE;
+  color: #C62828;
+  padding: 12px 24px;
+  border-radius: 60px;
   display: flex;
-  flex-direction: column;
-  gap: 1.5rem;
+  align-items: center;
+  gap: 12px;
+  z-index: 200;
+  font-weight: 500;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  backdrop-filter: blur(8px);
 }
 
-/* Error & Empty States */
-.error-message {
-  background: #FEF2F2;
-  color: #DC2626;
-  padding: 0.75rem 1rem;
-  border-radius: 20px;
-  margin-bottom: 1rem;
-  font-size: 0.85rem;
-  border-left: 4px solid #DC2626;
+.error-icon {
+  font-size: 1.2rem;
 }
 
-.no-posts {
+.error-close {
+  background: none;
+  border: none;
+  color: #C62828;
+  font-size: 1.2rem;
+  cursor: pointer;
+  margin-left: 8px;
+  opacity: 0.8;
+}
+
+.error-close:hover {
+  opacity: 1;
+}
+
+.no-posts-tiktok {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
   text-align: center;
-  padding: 3rem;
   background: white;
-  border-radius: 28px;
+  padding: 48px 32px;
+  border-radius: 48px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.05);
+  border: 1px solid rgba(0, 0, 0, 0.05);
+  width: 80%;
+  max-width: 400px;
+}
+
+.empty-state-icon {
+  font-size: 4rem;
+  margin-bottom: 20px;
+  display: inline-block;
+}
+
+.no-posts-tiktok p {
+  font-size: 1rem;
   color: #7A8B9F;
+  margin-bottom: 16px;
 }
 
-.empty-icon {
-  font-size: 3rem;
-  display: block;
-  margin-bottom: 0.5rem;
+.loading-container {
+  height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #FEF9E6;
 }
 
-/* Responsive */
 @media (max-width: 768px) {
-  .feed.embrace-feed {
-    padding: 0.5rem;
+  .create-post-float {
+    bottom: 70px;
+    right: 20px;
+    width: 48px;
+    height: 48px;
   }
-  
-  .create-post-card {
-    padding: 1rem;
+  .create-post-modal-content {
+    padding: 20px;
   }
-  
-  .user-avatar {
-    width: 40px;
-    height: 40px;
+  .modal-header h3 {
+    font-size: 1.2rem;
+  }
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
   }
 }
