@@ -1,238 +1,328 @@
-/* Profile Page */
-.profile-page {
-  max-width: 900px;
+/* Profile.css - Instagram Profile Layout */
+.ig-profile-page {
+  display: flex;
+  flex-direction: column;
+  max-width: 935px;
+  width: 100%;
   margin: 0 auto;
-  background: var(--white);
-  border-radius: var(--radius-2xl);
+  padding: 30px 20px 0;
+}
+
+/* Header Section */
+.ig-profile-header {
+  display: flex;
+  margin-bottom: 44px;
+}
+
+.ig-profile-avatar-wrapper {
+  flex: 1;
+  display: flex;
+  justify-content: center;
+  margin-right: 30px;
+}
+
+.ig-profile-avatar-inner {
+  width: 150px;
+  height: 150px;
+  border-radius: 50%;
   overflow: hidden;
-  box-shadow: var(--shadow-md);
-  margin-top: 2rem;
+  border: 1px solid var(--ig-border);
 }
 
-/* Cover Photo */
-.profile-cover {
-  height: 180px;
-  background: linear-gradient(135deg, var(--coral), var(--teal));
-  position: relative;
-}
-
-.cover-placeholder {
+.ig-profile-avatar-inner img {
   width: 100%;
   height: 100%;
-  background: radial-gradient(circle at 30% 50%, rgba(255,255,255,0.2) 0%, transparent 70%);
-}
-
-/* Profile Content */
-.profile-content {
-  position: relative;
-  padding: 0 2rem 2rem 2rem;
-  display: flex;
-  flex-wrap: wrap;
-  gap: 2rem;
-}
-
-.profile-avatar-section {
-  position: relative;
-  margin-top: -60px;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 1rem;
-}
-
-.profile-avatar-large {
-  width: 120px;
-  height: 120px;
-  border-radius: 50%;
   object-fit: cover;
-  border: 4px solid var(--white);
-  box-shadow: var(--shadow-md);
-  background: white;
 }
 
-.edit-profile-btn {
-  background: var(--coral);
-  color: white;
-  border: none;
-  border-radius: 40px;
-  padding: 0.5rem 1.2rem;
-  font-size: 0.85rem;
-  font-weight: 500;
-  cursor: pointer;
-  transition: all 0.2s;
-}
-
-.edit-profile-btn:hover {
-  background: var(--coral-dark);
-  transform: translateY(-2px);
-}
-
-.profile-info {
-  flex: 1;
-  padding-top: 1rem;
-}
-
-.profile-info h1 {
-  margin: 0 0 0.25rem 0;
-  font-size: 1.8rem;
-}
-
-.profile-details {
-  color: var(--gray);
-  font-size: 0.9rem;
-  margin-bottom: 0.5rem;
-}
-
-.profile-looking-for {
-  display: inline-block;
-  background: #f0f2f5;
-  padding: 0.2rem 0.8rem;
-  border-radius: 40px;
-  font-size: 0.8rem;
-  color: #5A6B7C;
-  margin-bottom: 1rem;
-}
-
-.profile-bio {
-  color: var(--charcoal);
-  line-height: 1.5;
-  margin-bottom: 1.5rem;
-  font-size: 1rem;
-}
-
-.profile-stats {
-  display: flex;
-  gap: 2rem;
-}
-
-.stat {
+.ig-profile-info-wrapper {
+  flex: 2;
   display: flex;
   flex-direction: column;
+}
+
+.ig-profile-username-row {
+  display: flex;
   align-items: center;
+  margin-bottom: 20px;
 }
 
-.stat-value {
-  font-weight: 700;
-  font-size: 1.2rem;
-  color: var(--charcoal);
+.ig-profile-username-row h2 {
+  font-size: 28px;
+  font-weight: 400;
+  margin-right: 20px;
+  color: var(--ig-text-primary);
 }
 
-.stat-label {
-  font-size: 0.8rem;
-  color: var(--gray);
+.ig-profile-actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
 }
 
-/* Edit Profile Modal */
-.edit-profile-modal {
-  position: fixed;
+.ig-edit-btn {
+  padding: 5px 9px;
+  border-radius: 4px;
+}
+
+.ig-settings-btn {
+  padding: 8px;
+}
+
+.ig-profile-stats {
+  display: flex;
+  margin-bottom: 20px;
+  gap: 40px;
+}
+
+.ig-profile-stats span {
+  font-size: 16px;
+  color: var(--ig-text-primary);
+}
+
+.ig-profile-bio-section {
+  font-size: 14px;
+}
+
+.ig-profile-fullname {
+  font-weight: 600;
+  font-size: 14px;
+}
+
+.ig-profile-details {
+  margin: 2px 0;
+}
+
+.ig-profile-bio {
+  white-space: pre-wrap;
+}
+
+.ig-profile-bio-mobile {
+  display: none;
+  padding: 0 16px 20px;
+  font-size: 14px;
+}
+
+/* Tabs */
+.ig-profile-tabs {
+  display: flex;
+  justify-content: center;
+  border-top: 1px solid var(--ig-border);
+  gap: 60px;
+}
+
+.ig-profile-tab {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  height: 52px;
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 1px;
+  color: var(--ig-text-secondary);
+  cursor: pointer;
+}
+
+.ig-profile-tab.active {
+  color: var(--ig-text-primary);
+  border-top: 1px solid var(--ig-text-primary);
+  margin-top: -1px;
+}
+
+/* Grid */
+.ig-profile-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 28px;
+  margin-bottom: 30px;
+}
+
+.ig-profile-grid-item {
+  position: relative;
+  aspect-ratio: 1 / 1;
+  background-color: var(--ig-background);
+  cursor: pointer;
+}
+
+.ig-profile-grid-item img,
+.ig-profile-grid-item video {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.ig-profile-grid-overlay {
+  position: absolute;
   top: 0;
   left: 0;
   right: 0;
   bottom: 0;
-  background: rgba(0,0,0,0.5);
-  backdrop-filter: blur(4px);
+  background-color: rgba(0, 0, 0, 0.3);
   display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 20px;
+  color: white;
+  font-weight: 600;
+  font-size: 16px;
+  opacity: 0;
+  transition: opacity 0.2s;
+}
+
+.ig-profile-grid-item:hover .ig-profile-grid-overlay {
+  opacity: 1;
+}
+
+.ig-profile-loading,
+.ig-profile-empty {
+  grid-column: 1 / -1;
+  display: flex;
+  flex-direction: column;
   align-items: center;
   justify-content: center;
-  z-index: 1000;
-  padding: 1rem;
+  padding: 60px 0;
+  color: var(--ig-text-secondary);
 }
 
-.edit-profile-card {
-  background: var(--white);
-  border-radius: var(--radius-xl);
-  max-width: 500px;
-  width: 100%;
-  max-height: 90vh;
-  overflow-y: auto;
-  padding: 1.5rem;
-  box-shadow: var(--shadow-lg);
+.ig-profile-empty-icon {
+  font-size: 48px;
+  margin-bottom: 20px;
 }
 
-.edit-header {
+/* Edit Modal Specifics */
+.ig-edit-modal {
+  max-width: 400px;
+}
+
+.ig-edit-form {
   display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 1.5rem;
-  padding-bottom: 0.5rem;
-  border-bottom: 1px solid var(--border);
+  flex-direction: column;
+  gap: 20px;
 }
 
-.edit-header h2 {
-  margin: 0;
-  font-size: 1.5rem;
-}
-
-.close-btn {
-  background: none;
-  border: none;
-  font-size: 1.5rem;
-  cursor: pointer;
-  color: var(--gray);
-  padding: 0;
-  width: 32px;
-  height: 32px;
+.ig-edit-avatar-section {
   display: flex;
   align-items: center;
-  justify-content: center;
-  border-radius: 50%;
+  background-color: var(--ig-secondary-button);
+  padding: 16px;
+  border-radius: 8px;
+  gap: 16px;
 }
 
-.close-btn:hover {
-  background: rgba(0,0,0,0.05);
-  color: var(--coral);
-}
-
-.preview-container {
-  margin: 0.5rem 0;
-  text-align: center;
-}
-
-.preview-image {
-  max-width: 100px;
-  max-height: 100px;
+.ig-edit-avatar-preview {
+  width: 50px;
+  height: 50px;
   border-radius: 50%;
   object-fit: cover;
-  border: 2px solid var(--coral);
 }
 
-.edit-actions {
+.ig-edit-avatar-input {
   display: flex;
-  gap: 1rem;
-  justify-content: flex-end;
-  margin-top: 1.5rem;
+  flex-direction: column;
+  flex: 1;
 }
 
-.edit-actions button {
-  padding: 0.6rem 1.2rem;
+.ig-edit-username {
+  font-weight: 600;
+  font-size: 16px;
 }
 
-.btn-secondary {
-  background: transparent;
-  border: 1px solid var(--coral);
-  color: var(--coral);
+.ig-change-photo-btn {
+  color: var(--ig-primary-button);
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  margin-top: 2px;
 }
 
-.btn-secondary:hover {
-  background: var(--coral-light);
-  color: white;
+.ig-edit-form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.ig-edit-form-group label {
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.ig-edit-form-row {
+  display: flex;
+  gap: 16px;
+}
+
+.ig-edit-form-row > * {
+  flex: 1;
+}
+
+.ig-textarea-count {
+  font-size: 12px;
+  color: var(--ig-text-secondary);
+  text-align: right;
 }
 
 /* Responsive */
 @media (max-width: 768px) {
-  .profile-content {
-    flex-direction: column;
-    align-items: center;
-    text-align: center;
-    padding: 0 1rem 1.5rem;
+  .ig-profile-page {
+    padding: 16px 0 0;
   }
-
-  .profile-stats {
-    justify-content: center;
+  
+  .ig-profile-header {
+    margin-bottom: 24px;
+    padding: 0 16px;
   }
-
-  .edit-profile-card {
-    margin: 1rem;
-    padding: 1rem;
+  
+  .ig-profile-avatar-inner {
+    width: 77px;
+    height: 77px;
+  }
+  
+  .ig-profile-avatar-wrapper {
+    flex: unset;
+    margin-right: 28px;
+  }
+  
+  .ig-profile-info-wrapper {
+    flex: 1;
+  }
+  
+  .ig-profile-username-row {
+    margin-bottom: 12px;
+    flex-wrap: wrap;
+    gap: 10px;
+  }
+  
+  .ig-profile-username-row h2 {
+    font-size: 20px;
+    margin-right: 0;
+  }
+  
+  .ig-profile-actions {
+    width: 100%;
+  }
+  
+  .ig-edit-btn {
+    flex: 1;
+  }
+  
+  .ig-profile-stats {
+    display: none; /* Hide on mobile in header, should technically move below bio */
+  }
+  
+  .ig-profile-bio-section {
+    display: none; /* Hide in header */
+  }
+  
+  .ig-profile-bio-mobile {
+    display: block; /* Show below */
+  }
+  
+  .ig-profile-tabs {
+    gap: 0;
+    justify-content: space-around;
+  }
+  
+  .ig-profile-grid {
+    gap: 3px;
   }
 }

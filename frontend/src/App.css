@@ -1,22 +1,19 @@
-/* ===== DESIGN SYSTEM ===== */
+/* ===== INSTAGRAM DESIGN SYSTEM ===== */
 :root {
-  --coral: #FF6B6B;
-  --coral-dark: #E55B5B;
-  --teal: #4ECDC4;
-  --teal-dark: #3DBDB4;
-  --gold: #FFE66D;
-  --cream: #FEF9E6;
-  --white: #FFFFFF;
-  --charcoal: #2D3E50;
-  --gray: #7A8B9F;
-  --shadow-sm: 0 4px 12px rgba(0,0,0,0.05);
-  --shadow-md: 0 8px 24px rgba(0,0,0,0.08);
-  --shadow-lg: 0 16px 32px rgba(0,0,0,0.12);
-  --radius-xl: 32px;
-  --radius-2xl: 48px;
+  --ig-primary-button: #0095f6;
+  --ig-primary-button-hover: #1877f2;
+  --ig-secondary-button: #efefef;
+  --ig-secondary-button-hover: #dbdbdb;
+  --ig-text-primary: #000000;
+  --ig-text-secondary: #737373;
+  --ig-border: #dbdbdb;
+  --ig-background: #fafafa;
+  --ig-white: #ffffff;
+  --ig-error: #ed4956;
+  --ig-link: #00376b;
+  --ig-nav-width: 244px;
+  --ig-nav-width-narrow: 72px;
 }
-
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Poppins:wght@600;700;800&display=swap');
 
 * {
   margin: 0;
@@ -26,324 +23,135 @@
 
 html, body, #root {
   height: 100%;
+  background-color: var(--ig-background);
 }
 
 body {
-  font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
-  background-color: var(--cream);
-  color: var(--charcoal);
-  line-height: 1.5;
-  background-image: radial-gradient(circle at 10% 20%, rgba(255,107,107,0.03) 0%, transparent 50%),
-                    radial-gradient(circle at 90% 80%, rgba(78,205,196,0.03) 0%, transparent 50%);
-  background-attachment: fixed;
-  overflow-x: hidden;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  color: var(--ig-text-primary);
+  line-height: 1.4;
+  overflow-y: scroll;
 }
 
+/* ===== LAYOUT ===== */
 .main-content {
   display: flex;
   flex: 1;
-  margin-left: 300px; /* Accommodate permanent sidebar */
-  transition: margin-left 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  margin-left: var(--ig-nav-width);
+  min-height: 100vh;
+  transition: margin-left 0.3s ease;
+  justify-content: center;
 }
 
 .container {
-  max-width: 1300px;
-  margin: 0 auto;
-  padding: 1.5rem;
-  min-height: calc(100vh - 80px);
+  max-width: 935px;
   width: 100%;
+  padding: 30px 20px 0;
+  margin: 0 auto;
 }
 
 /* ===== TYPOGRAPHY ===== */
 h1, h2, h3, h4, h5, h6 {
-  font-family: 'Poppins', 'Inter', sans-serif;
   font-weight: 600;
-  letter-spacing: -0.02em;
+  color: var(--ig-text-primary);
 }
 
-/* ===== FORMS ===== */
-.form-group {
-  margin-bottom: 1.5rem;
-}
-
-.form-group label {
-  display: block;
-  margin-bottom: 0.5rem;
-  font-weight: 600;
-  font-size: 0.9rem;
-  color: var(--charcoal);
-}
-
+/* ===== FORMS & INPUTS ===== */
 input, textarea, select {
   width: 100%;
-  padding: 0.9rem 1.2rem;
-  border: 2px solid #e8eef5;
-  border-radius: 12px;
-  background: #fafbfc;
-  font-size: 0.95rem;
+  padding: 9px 8px 7px;
+  background: var(--ig-background);
+  border: 1px solid var(--ig-border);
+  border-radius: 3px;
+  font-size: 14px;
+  color: var(--ig-text-primary);
   font-family: inherit;
-  transition: all 0.2s;
 }
 
 input:focus, textarea:focus, select:focus {
   outline: none;
-  border-color: var(--coral);
-  background: white;
-  box-shadow: 0 0 0 4px rgba(255,107,107,0.1);
+  border-color: #a8a8a8;
 }
 
 input::placeholder, textarea::placeholder {
-  color: #b0bcc9;
-}
-
-textarea {
-  border-radius: 16px;
-  resize: vertical;
+  color: var(--ig-text-secondary);
 }
 
 /* ===== BUTTONS ===== */
 button {
-  background: linear-gradient(135deg, var(--coral) 0%, #ff5252 100%);
-  color: white;
-  padding: 0.9rem 1.8rem;
-  border: none;
-  border-radius: 12px;
-  font-size: 0.95rem;
-  font-weight: 600;
-  font-family: inherit;
   cursor: pointer;
-  transition: all 0.3s;
-  box-shadow: 0 10px 30px rgba(255, 107, 107, 0.3);
-}
-
-button:hover:not(:disabled) {
-  background: linear-gradient(135deg, #ff5252 0%, #ff3030 100%);
-  transform: translateY(-3px);
-  box-shadow: 0 15px 40px rgba(255, 107, 107, 0.4);
-}
-
-button:disabled {
-  opacity: 0.6;
-  cursor: not-allowed;
-  transform: none;
-}
-
-.btn-outline {
+  border: none;
   background: transparent;
-  border: 2px solid var(--coral);
-  color: var(--coral);
-  box-shadow: none;
+  font-family: inherit;
 }
 
-.btn-outline:hover {
-  background: rgba(255, 107, 107, 0.05);
-  color: var(--coral-dark);
+.btn-primary {
+  background-color: var(--ig-primary-button);
+  color: var(--ig-white);
+  border-radius: 8px;
+  padding: 7px 16px;
+  font-weight: 600;
+  font-size: 14px;
+  border: none;
+  transition: background-color 0.2s;
+}
+
+.btn-primary:hover:not(:disabled) {
+  background-color: var(--ig-primary-button-hover);
+}
+
+.btn-primary:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
 }
 
 .btn-secondary {
-  background: linear-gradient(135deg, var(--teal) 0%, #3DBDB4 100%);
-  box-shadow: 0 10px 30px rgba(78, 205, 196, 0.3);
+  background-color: var(--ig-secondary-button);
+  color: var(--ig-text-primary);
+  border-radius: 8px;
+  padding: 7px 16px;
+  font-weight: 600;
+  font-size: 14px;
+  border: none;
+  transition: background-color 0.2s;
 }
 
-.btn-secondary:hover:not(:disabled) {
-  transform: translateY(-3px);
-  box-shadow: 0 15px 40px rgba(78, 205, 196, 0.4);
+.btn-secondary:hover {
+  background-color: var(--ig-secondary-button-hover);
 }
 
-/* ===== MESSAGES ===== */
+/* ===== UTILITIES ===== */
 .error-message {
-  background: linear-gradient(135deg, rgba(255, 107, 107, 0.1) 0%, rgba(255, 107, 107, 0.05) 100%);
-  border-left: 4px solid #FF6B6B;
-  color: #c33;
-  padding: 1rem 1.2rem;
-  border-radius: 12px;
-  margin-bottom: 1rem;
-  font-size: 0.9rem;
-  font-weight: 500;
+  color: var(--ig-error);
+  font-size: 14px;
+  margin-bottom: 10px;
+  text-align: center;
 }
 
 .success-message {
-  background: linear-gradient(135deg, rgba(78, 205, 196, 0.1) 0%, rgba(78, 205, 196, 0.05) 100%);
-  border-left: 4px solid var(--teal);
-  color: #0d6b63;
-  padding: 1rem 1.2rem;
-  border-radius: 12px;
-  margin-bottom: 1rem;
-  font-size: 0.9rem;
-  font-weight: 500;
+  color: #28a745;
+  font-size: 14px;
+  margin-bottom: 10px;
+  text-align: center;
 }
 
-/* ===== CARDS (Universal) ===== */
-.card {
-  background: var(--white);
-  border-radius: 20px;
-  padding: 1.5rem;
-  box-shadow: 0 8px 24px rgba(0,0,0,0.08);
-  transition: all 0.3s cubic-bezier(0.2, 0.9, 0.4, 1.1);
-  border: 1px solid rgba(255,255,255,0.5);
+.font-weight-semibold {
+  font-weight: 600;
 }
 
-.card:hover {
-  transform: translateY(-6px);
-  box-shadow: 0 16px 40px rgba(0,0,0,0.12);
-}
-
-/* ===== GRID (Asymmetric) ===== */
-.grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-  gap: 2rem;
-}
-
-/* Add staggered effect to grid children */
-.grid > :nth-child(odd) {
-  transform: translateY(10px);
-}
-
-/* ===== PROFILE PICTURES ===== */
-.profile-picture {
-  width: 100px;
-  height: 100px;
-  border-radius: 50%;
-  object-fit: cover;
-  border: 3px solid var(--white);
-  box-shadow: 0 8px 24px rgba(0,0,0,0.12);
-}
-
-.profile-picture-small {
-  width: 48px;
-  height: 48px;
-  border-radius: 50%;
-  object-fit: cover;
-  border: 2px solid white;
-  box-shadow: var(--shadow-sm);
-}
-
-.profile-picture-large {
-  width: 128px;
-  height: 128px;
-  border-radius: 50%;
-  object-fit: cover;
-  border: 4px solid white;
-  box-shadow: var(--shadow-md);
-}
-
-/* ===== ANIMATIONS ===== */
-@keyframes float {
-  0% { transform: translateY(0px); }
-  50% { transform: translateY(-6px); }
-  100% { transform: translateY(0px); }
-}
-
-@keyframes fadeIn {
-  from { opacity: 0; }
-  to { opacity: 1; }
-}
-
-@keyframes slideUp {
-  from { 
-    opacity: 0;
-    transform: translateY(20px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
+.text-secondary {
+  color: var(--ig-text-secondary);
 }
 
 /* ===== RESPONSIVE ===== */
-@media (max-width: 768px) {
-  .container {
-    padding: 1rem;
-  }
+/* Removed 1263px breakpoint to keep sidebar wide until 768px */
 
-  .grid {
-    grid-template-columns: 1fr;
-    gap: 1.5rem;
-  }
-}
-
-.float {
-  animation: float 4s ease-in-out infinite;
-}
-
-@keyframes fadeSlide {
-  from {
-    opacity: 0;
-    transform: translateY(20px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-.fade-slide {
-  animation: fadeSlide 0.5s ease-out;
-}
-
-/* ===== RESPONSIVE & LAYOUT ===== */
-/* For desktop: push main content to the right for the vertical navbar */
-@media (min-width: 1025px) {
-  .main-content {
-    margin-left: 300px; /* Full sidebar width */
-  }
-  .container {
-    max-width: calc(1300px - 300px);
-    margin: 0 auto;
-  }
-
-  /* Collapsed sidebar state */
-  .sidebar-collapsed .main-content {
-    margin-left: 80px; /* Collapsed sidebar width */
-  }
-  .sidebar-collapsed .container {
-    max-width: calc(1300px - 80px);
-    margin: 0 auto;
-  }
-}
-
-@media (max-width: 1024px) and (min-width: 769px) {
-  .main-content {
-    margin-left: 280px; /* Slightly smaller sidebar on medium screens */
-  }
-  .container {
-    max-width: calc(1200px - 280px);
-    margin: 0 auto;
-  }
-
-  /* Collapsed sidebar state */
-  .sidebar-collapsed .main-content {
-    margin-left: 70px; /* Collapsed sidebar width */
-  }
-  .sidebar-collapsed .container {
-    max-width: calc(1200px - 70px);
-    margin: 0 auto;
-  }
-}
-
-/* On mobile/tablet, no margin needed (sidebar can be collapsed or hidden) */
 @media (max-width: 768px) {
   .main-content {
     margin-left: 0;
+    margin-bottom: 50px; /* Space for bottom nav */
   }
   .container {
-    max-width: 1300px;
-    margin: 0 auto;
-  }
-
-  .container {
-    padding: 1rem;
-    max-width: 100%;
-  }
-  .grid {
-    gap: 1rem;
-  }
-  .grid > :nth-child(odd) {
-    transform: translateY(0);
-  }
-  /* Add bottom padding for mobile so content doesn't hide behind bottom nav */
-  .container {
-    padding-bottom: 70px;
+    padding: 10px 0 0;
   }
 }

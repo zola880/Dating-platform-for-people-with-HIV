@@ -1,647 +1,205 @@
-/* Post.css - Professional TikTok-Style Post | FIXED SCROLL ARCHITECTURE */
-
-/* ========================================
-   CSS VARIABLES (Fallbacks sync with Feed.css)
-   ======================================== */
-:root {
-  --tiktok-black: #000000;
-  --tiktok-dark: #121212;
-  --tiktok-darker: #0a0a0a;
-  --tiktok-gray: #8e8e93;
-  --tiktok-white: #ffffff;
-  --tiktok-cyan: #00f2ea;
-  --tiktok-pink: #ff0050;
-  --tiktok-red: #fe2c55;
-  --tiktok-gradient: linear-gradient(45deg, var(--tiktok-cyan), var(--tiktok-pink));
-  
-  --spacing-sm: 8px;
-  --spacing-md: 16px;
-  --spacing-lg: 24px;
-  --spacing-xl: 32px;
-  --radius-sm: 8px;
-  --radius-md: 12px;
-  --radius-lg: 20px;
-  --radius-full: 50%;
-  
-  --font-primary: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-  --font-size-xs: 11px;
-  --font-size-sm: 13px;
-  --font-size-md: 15px;
-  --font-size-lg: 17px;
-  
-  --transition-normal: 300ms ease;
-  --z-overlay: 200;
-  --z-modal: 400;
-}
-
-/* ========================================
-   POST WRAPPER - STRICT VIEWPORT CONTAINER ✅
-   ======================================== */
-.post-wrapper {
-  position: relative;
-  width: 100%;
-  height: 100%;
-  background: var(--tiktok-black);
-  
-  /* ✅ CRITICAL: Prevents layout escape & nested scroll conflicts */
-  overflow: hidden;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  
-  /* Performance */
-  contain: layout style;
-  transform: translateZ(0);
-}
-
-/* ========================================
-   POST CARD - CONTENT LAYOUT (NO SCROLL) ✅
-   ======================================== */
-.post-card {
-  flex: 1;
-  height: 100%;
+/* Post.css - Instagram Post Styling */
+.ig-post {
   display: flex;
   flex-direction: column;
-  
-  /* ✅ CRITICAL: No overflow. Content stays within 100vh snap container */
-  overflow: hidden;
-  padding: var(--spacing-md);
-  padding-right: 80px; /* Space for side actions */
-  position: relative;
-  
-  /* Smooth content transitions */
-  transition: opacity var(--transition-normal);
+  background-color: var(--ig-white);
+  border: 1px solid var(--ig-border);
+  border-radius: 4px;
+  margin-bottom: 20px;
 }
 
-/* ========================================
-   POST HEADER (Sticky Top)
-   ======================================== */
-.post-header {
+/* Header */
+.ig-post-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 14px;
+}
+
+.ig-post-header-user {
   display: flex;
   align-items: center;
-  gap: var(--spacing-sm);
-  padding-bottom: var(--spacing-sm);
-  margin-bottom: var(--spacing-sm);
-  
-  /* ✅ Sticky within viewport, not within card */
-  position: sticky;
-  top: 0;
-  z-index: 15;
-  background: linear-gradient(to bottom, rgba(0, 0, 0, 0.95) 60%, transparent);
-  backdrop-filter: blur(4px);
 }
 
-.post-avatar {
-  width: 40px;
-  height: 40px;
-  border-radius: var(--radius-full);
-  object-fit: cover;
-  border: 2px solid var(--tiktok-cyan);
-  cursor: pointer;
-  flex-shrink: 0;
-  transition: transform var(--transition-normal), border-color var(--transition-normal);
-}
-
-.post-avatar:hover {
-  transform: scale(1.05);
-  border-color: var(--tiktok-pink);
-}
-
-.post-user-info { flex: 1; min-width: 0; }
-
-.post-user-info h4 {
-  font-size: var(--font-size-md);
-  font-weight: 600;
-  color: var(--tiktok-white);
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-
-.post-date {
-  display: block;
-  font-size: var(--font-size-xs);
-  color: var(--tiktok-gray);
-  margin-top: 2px;
-}
-
-.post-delete {
-  background: rgba(254, 44, 85, 0.2);
-  color: var(--tiktok-red);
-  border: 1px solid rgba(254, 44, 85, 0.3);
-  padding: 4px 8px;
-  border-radius: var(--radius-sm);
-  font-size: var(--font-size-xs);
-  cursor: pointer;
-  flex-shrink: 0;
-  transition: all var(--transition-normal);
-}
-
-.post-delete:hover {
-  background: var(--tiktok-red);
-  color: white;
-}
-
-/* ========================================
-   POST CONTENT & MEDIA ✅
-   ======================================== */
-.post-content {
-  flex: 1;
-  min-height: 0; /* Allows flex shrink without overflow */
-  overflow-y: auto;
-  scrollbar-width: none;
-  padding-bottom: var(--spacing-sm);
-}
-
-.post-content p {
-  font-size: var(--font-size-md);
-  line-height: 1.5;
-  color: var(--tiktok-white);
-  margin-bottom: var(--spacing-md);
-  word-wrap: break-word;
-  white-space: pre-wrap;
-}
-
-.post-media {
-  width: 100%;
-  /* ✅ Fixed aspect ratio prevents layout shift */
-  aspect-ratio: 9/16;
-  max-height: 70vh;
-  border-radius: var(--radius-md);
-  overflow: hidden;
-  background: var(--tiktok-darker);
-  position: relative;
-  flex-shrink: 0;
-}
-
-.post-image,
-.post-video {
-  width: 100%;
-  height: 100%;
-  object-fit: contain;
-  display: block;
-  background: var(--tiktok-black);
-}
-
-.post-image { cursor: pointer; transition: transform var(--transition-normal); }
-.post-image:hover { transform: scale(1.02); }
-
-/* Video States */
-.post-video {
-  /* Remove default controls for custom UI */
-  &::-webkit-media-controls { display: none; }
-}
-
-.post-video.loading {
-  background: linear-gradient(90deg, var(--tiktok-darker) 25%, #1a1a1a 50%, var(--tiktok-darker) 75%);
-  background-size: 200% 100%;
-  animation: shimmer 1.5s infinite;
-}
-
-.post-video.error {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: var(--tiktok-gray);
-  font-size: var(--font-size-sm);
-}
-
-@keyframes shimmer {
-  0% { background-position: -200% 0; }
-  100% { background-position: 200% 0; }
-}
-
-/* Play Overlay (shown when paused/blocked) */
-.video-play-overlay {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%) scale(0.9);
-  width: 64px;
-  height: 64px;
-  border-radius: var(--radius-full);
-  background: rgba(0, 0, 0, 0.6);
-  border: 2px solid rgba(255, 255, 255, 0.8);
-  color: white;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
-  opacity: 0;
-  pointer-events: none;
-  transition: all var(--transition-normal);
-  z-index: 5;
-}
-
-/* Show overlay when video is paused or not playing */
-.post-video[paused] + .video-play-overlay,
-.post-video.paused + .video-play-overlay {
-  opacity: 1;
-  pointer-events: auto;
-  transform: translate(-50%, -50%) scale(1);
-}
-
-.video-play-overlay:hover {
-  background: rgba(0, 0, 0, 0.8);
-  transform: translate(-50%, -50%) scale(1.1);
-}
-
-/* ========================================
-   BOTTOM ACTIONS BAR (Sticky)
-   ======================================== */
-.post-actions {
-  display: flex;
-  gap: var(--spacing-lg);
-  padding: var(--spacing-sm) 0;
-  margin-top: auto;
-  position: sticky;
-  bottom: 0;
-  z-index: 15;
-  background: linear-gradient(to top, rgba(0, 0, 0, 0.95) 70%, transparent);
-  backdrop-filter: blur(4px);
-  padding-bottom: var(--spacing-md);
-}
-
-.post-actions button {
-  background: none;
-  border: none;
-  color: var(--tiktok-white);
-  font-size: var(--font-size-md);
-  font-weight: 500;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  gap: 4px;
-  padding: 6px 10px;
-  border-radius: var(--radius-full);
-  transition: all var(--transition-normal);
-}
-
-.post-actions button:hover:not(:disabled) {
-  background: rgba(255, 255, 255, 0.1);
-  transform: translateY(-2px);
-}
-
-.post-actions button:disabled {
-  opacity: 0.4;
-  cursor: not-allowed;
-}
-
-.like-btn.liked {
-  color: var(--tiktok-red);
-  animation: heartBeat 0.3s ease;
-}
-
-@keyframes heartBeat {
-  0%, 100% { transform: scale(1); }
-  50% { transform: scale(1.25); }
-}
-
-/* ========================================
-   SIDE ACTIONS PANEL (TikTok Style) ✅
-   ======================================== */
-.post-actions-side {
-  position: absolute;
-  right: 8px;
-  bottom: var(--spacing-xl);
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: var(--spacing-md);
-  z-index: 20;
-  
-  /* ✅ Prevents scroll interference */
-  pointer-events: none;
-}
-
-.post-actions-side > * {
-  pointer-events: auto;
-}
-
-.action-profile {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 4px;
-  margin-bottom: var(--spacing-sm);
-  padding-bottom: var(--spacing-sm);
-  border-bottom: 1px solid rgba(255, 255, 255, 0.15);
-  width: 60px;
-}
-
-.action-avatar {
-  width: 48px;
-  height: 48px;
-  border-radius: var(--radius-full);
-  object-fit: cover;
-  border: 2px solid var(--tiktok-cyan);
-  transition: all var(--transition-normal);
-}
-
-.action-avatar:hover {
-  border-color: var(--tiktok-pink);
-  transform: scale(1.05);
-  box-shadow: 0 0 12px rgba(255, 0, 80, 0.4);
-}
-
-.action-username {
-  font-size: var(--font-size-xs);
-  color: var(--tiktok-white);
-  text-align: center;
-  width: 100%;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  font-weight: 500;
-}
-
-.follow-btn {
-  width: 100%;
-  padding: 5px 8px;
-  background: var(--tiktok-gradient);
-  color: white;
-  border: none;
-  border-radius: var(--radius-full);
-  font-size: var(--font-size-xs);
-  font-weight: 600;
-  cursor: pointer;
-  transition: all var(--transition-normal);
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-
-.follow-btn:hover { transform: scale(1.05); box-shadow: 0 0 10px rgba(0, 242, 234, 0.4); }
-.follow-btn.following { background: rgba(255, 255, 255, 0.15); border: 1px solid rgba(255, 255, 255, 0.3); }
-.follow-btn.following:hover { background: rgba(254, 44, 85, 0.2); border-color: var(--tiktok-red); color: var(--tiktok-red); }
-
-.action-item {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 4px;
-  cursor: pointer;
-  padding: 6px;
-  border-radius: var(--radius-md);
-  transition: transform var(--transition-normal);
-  min-width: 56px;
-}
-
-.action-item:hover { transform: translateY(-3px); }
-.action-item:active { transform: scale(0.95); }
-
-.action-icon { font-size: 26px; line-height: 1; filter: drop-shadow(0 2px 3px rgba(0,0,0,0.5)); }
-.action-count { font-size: var(--font-size-xs); color: var(--tiktok-white); font-weight: 500; text-shadow: 0 1px 2px rgba(0,0,0,0.6); }
-
-/* Share arrow rotation */
-.action-item:last-child .action-icon { transform: rotate(90deg); }
-
-/* ========================================
-   COMMENTS SECTION (Bounded Internal Scroll) ✅
-   ======================================== */
-.post-comments {
-  margin-top: var(--spacing-md);
-  padding-top: var(--spacing-md);
-  border-top: 1px solid rgba(255, 255, 255, 0.1);
-  animation: slideDown var(--transition-normal);
-  
-  /* ✅ CRITICAL: Bounded scroll prevents breaking parent snap */
-  max-height: 35vh;
-  overflow-y: auto;
-  overscroll-behavior: contain; /* Prevents scroll chaining to feed */
-  scrollbar-width: thin;
-  scrollbar-color: var(--tiktok-gray) transparent;
-}
-
-.post-comments::-webkit-scrollbar { width: 4px; }
-.post-comments::-webkit-scrollbar-thumb { background: var(--tiktok-gray); border-radius: var(--radius-full); }
-
-@keyframes slideDown {
-  from { opacity: 0; transform: translateY(-8px); }
-  to { opacity: 1; transform: translateY(0); }
-}
-
-.comment-item {
-  display: flex;
-  gap: var(--spacing-sm);
-  padding: var(--spacing-sm) 0;
-  align-items: flex-start;
-}
-
-.comment-avatar {
+.ig-post-avatar {
   width: 32px;
   height: 32px;
-  border-radius: var(--radius-full);
+  border-radius: 50%;
   object-fit: cover;
-  border: 1px solid rgba(255, 255, 255, 0.2);
-  flex-shrink: 0;
+  margin-right: 10px;
+  border: 1px solid var(--ig-border);
 }
 
-.comment-content {
-  flex: 1;
-  min-width: 0;
-  background: rgba(255, 255, 255, 0.06);
-  padding: var(--spacing-sm) var(--spacing-md);
-  border-radius: var(--radius-md);
-  border-top-left-radius: 4px;
-}
-
-.comment-content strong {
-  display: block;
-  font-size: var(--font-size-sm);
-  color: var(--tiktok-white);
-  margin-bottom: 2px;
+.ig-post-username {
   font-weight: 600;
+  font-size: 14px;
+  color: var(--ig-text-primary);
 }
 
-.comment-content p {
-  font-size: var(--font-size-sm);
-  color: #e0e0e0;
-  margin: 0 0 4px 0;
-  line-height: 1.4;
+.ig-post-time-dot {
+  color: var(--ig-text-secondary);
+  margin: 0 4px;
+  font-size: 14px;
+}
+
+.ig-post-time-header {
+  color: var(--ig-text-secondary);
+  font-size: 14px;
+}
+
+.ig-post-more {
+  cursor: pointer;
+  padding: 8px;
+}
+
+/* Media */
+.ig-post-media {
+  width: 100%;
+  background-color: var(--ig-background); /* Just in case image doesn't fill */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.ig-post-media img,
+.ig-post-media video {
+  width: 100%;
+  max-height: 585px; /* Common Instagram max height on desktop */
+  object-fit: contain;
+}
+
+/* Actions Wrapper */
+.ig-post-actions-wrapper {
+  padding: 0 14px;
+}
+
+/* Actions */
+.ig-post-actions {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 6px 0;
+  margin-top: 4px;
+}
+
+.ig-post-action-left {
+  display: flex;
+  gap: 16px;
+}
+
+.ig-action-btn {
+  padding: 8px 0;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.ig-action-btn:hover {
+  opacity: 0.7;
+}
+
+.ig-action-btn svg {
+  transition: transform 0.1s;
+}
+
+.ig-action-btn:active svg {
+  transform: scale(0.9);
+}
+
+/* Likes */
+.ig-post-likes {
+  font-weight: 600;
+  font-size: 14px;
+  margin-bottom: 8px;
+  color: var(--ig-text-primary);
+}
+
+/* Caption */
+.ig-post-caption {
+  font-size: 14px;
+  margin-bottom: 8px;
   word-wrap: break-word;
 }
 
-.comment-date { font-size: var(--font-size-xs); color: var(--tiktok-gray); }
-
-.comment-delete {
-  background: none;
-  border: none;
-  color: var(--tiktok-gray);
-  font-size: var(--font-size-sm);
-  cursor: pointer;
-  padding: 4px;
-  border-radius: var(--radius-sm);
-  transition: all var(--transition-normal);
-  flex-shrink: 0;
-  align-self: center;
+.ig-post-caption-text {
+  font-weight: 400;
 }
 
-.comment-delete:hover { color: var(--tiktok-red); background: rgba(254, 44, 85, 0.15); }
-
-/* Add Comment Form */
-.add-comment {
+/* Comments */
+.ig-post-comments {
   display: flex;
-  gap: var(--spacing-sm);
-  margin-top: var(--spacing-md);
-  padding-top: var(--spacing-md);
-  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  flex-direction: column;
+  gap: 4px;
+  margin-bottom: 8px;
 }
 
-.add-comment input {
+.ig-post-view-comments {
+  color: var(--ig-text-secondary);
+  font-size: 14px;
+  cursor: pointer;
+  margin-bottom: 4px;
+}
+
+.ig-post-comment-item {
+  font-size: 14px;
+  word-wrap: break-word;
+}
+
+.ig-post-comment-text {
+  font-weight: 400;
+}
+
+/* Time Footer */
+.ig-post-time {
+  font-size: 10px;
+  color: var(--ig-text-secondary);
+  margin-bottom: 16px;
+  letter-spacing: 0.2px;
+}
+
+/* Add Comment Input */
+.ig-post-add-comment {
+  display: flex;
+  align-items: center;
+  padding: 10px 14px;
+  border-top: 1px solid var(--ig-border);
+}
+
+.ig-post-add-comment input {
   flex: 1;
-  padding: var(--spacing-sm) var(--spacing-md);
-  background: rgba(255, 255, 255, 0.08);
-  border: 1px solid rgba(255, 255, 255, 0.15);
-  border-radius: var(--radius-full);
-  color: var(--tiktok-white);
-  font-size: var(--font-size-sm);
-  transition: border-color var(--transition-normal);
+  border: none;
+  background: transparent;
+  padding: 8px 0;
+  font-size: 14px;
 }
 
-.add-comment input::placeholder { color: var(--tiktok-gray); }
-.add-comment input:focus { outline: none; border-color: var(--tiktok-cyan); background: rgba(255, 255, 255, 0.12); }
+.ig-post-add-comment input:focus {
+  outline: none;
+}
 
-.add-comment button {
-  padding: var(--spacing-sm) var(--spacing-lg);
-  background: var(--tiktok-gradient);
-  color: white;
-  border: none;
-  border-radius: var(--radius-full);
-  font-size: var(--font-size-sm);
+.ig-post-post-btn {
+  color: var(--ig-primary-button);
   font-weight: 600;
-  cursor: pointer;
-  transition: all var(--transition-normal);
-  white-space: nowrap;
-}
-
-.add-comment button:hover:not(:disabled) { transform: translateY(-2px); box-shadow: 0 4px 12px rgba(0, 242, 234, 0.3); }
-.add-comment button:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
-
-.login-to-comment {
-  text-align: center;
-  padding: var(--spacing-md);
-  color: var(--tiktok-gray);
-  font-size: var(--font-size-sm);
-}
-
-.comment-login-btn {
-  background: var(--tiktok-gradient);
-  color: white;
+  font-size: 14px;
+  background: transparent;
   border: none;
-  padding: var(--spacing-sm) var(--spacing-lg);
-  border-radius: var(--radius-full);
-  font-weight: 600;
-  cursor: pointer;
-  transition: all var(--transition-normal);
-  margin-top: var(--spacing-sm);
+  padding: 0 8px;
+  opacity: 1;
 }
 
-.comment-login-btn:hover { transform: translateY(-2px); box-shadow: 0 4px 12px rgba(0, 242, 234, 0.3); }
-
-/* ========================================
-   IMAGE MODAL (Lightbox)
-   ======================================== */
-.image-modal {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: rgba(0, 0, 0, 0.95);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  z-index: var(--z-modal);
-  animation: fadeIn var(--transition-normal);
-  backdrop-filter: blur(4px);
+.ig-post-post-btn:disabled {
+  opacity: 0.5;
+  cursor: default;
 }
 
-.image-modal-content {
-  position: relative;
-  max-width: 95%;
-  max-height: 95%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.image-modal-content img {
-  max-width: 100%;
-  max-height: 90vh;
-  border-radius: var(--radius-md);
-  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.5);
-  object-fit: contain;
-  animation: zoomIn var(--transition-normal);
-}
-
-@keyframes zoomIn { from { opacity: 0; transform: scale(0.9); } to { opacity: 1; transform: scale(1); } }
-@keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
-
-.image-modal-close {
-  position: absolute;
-  top: -40px;
-  right: 0;
-  background: rgba(255, 255, 255, 0.1);
-  border: none;
-  color: white;
-  font-size: 28px;
-  width: 36px;
-  height: 36px;
-  border-radius: var(--radius-full);
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  transition: all var(--transition-normal);
-}
-
-.image-modal-close:hover { background: var(--tiktok-red); transform: rotate(90deg); }
-
-/* ========================================
-   RESPONSIVE & ACCESSIBILITY ✅
-   ======================================== */
-@media (max-width: 480px) {
-  .post-card { padding-right: 70px; }
-  .post-actions-side { right: 4px; bottom: 70px; gap: var(--spacing-sm); }
-  .action-icon { font-size: 22px; }
-  .follow-btn { font-size: 10px; padding: 4px 6px; }
-}
-
-@media (prefers-reduced-motion: reduce) {
-  *, *::before, *::after {
-    animation-duration: 0.01ms !important;
-    animation-iteration-count: 1 !important;
-    transition-duration: 0.01ms !important;
+/* Mobile Responsive */
+@media (max-width: 768px) {
+  .ig-post {
+    border-left: none;
+    border-right: none;
+    border-radius: 0;
   }
-}
-
-/* Keyboard Focus */
-.post-avatar:focus-visible, .action-avatar:focus-visible, .follow-btn:focus-visible,
-.action-item:focus-visible, .post-actions button:focus-visible, .add-comment input:focus-visible,
-.add-comment button:focus-visible, .comment-delete:focus-visible, .image-modal-close:focus-visible,
-.video-play-overlay:focus-visible {
-  outline: 2px solid var(--tiktok-cyan);
-  outline-offset: 2px;
-}
-
-/* High Contrast Mode */
-@media (prefers-contrast: high) {
-  .post-avatar, .action-avatar { border-width: 3px; }
-  .follow-btn { border: 2px solid var(--tiktok-white); }
-  .comment-content, .add-comment input { border: 1px solid var(--tiktok-white); }
-}
-
-/* ========================================
-   PERFORMANCE OPTIMIZATIONS ✅
-   ======================================== */
-.post-wrapper, .post-media, .action-item, .follow-btn, .image-modal-content {
-  will-change: transform;
-  transform: translateZ(0);
-  backface-visibility: hidden;
-}
-
-.post-avatar, .action-avatar, .comment-avatar {
-  aspect-ratio: 1/1;
-  background: linear-gradient(135deg, var(--tiktok-darker), #1a1a1a);
 }

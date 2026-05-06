@@ -1,8 +1,28 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useAuth } from '../context/AuthContext';
+import { getPosts } from '../utils/postApi';
 import config from '../utils/config';
 import Spinner from '../components/Spinner';
 import './Profile.css';
+
+// SVG Icons
+const Icons = {
+  Grid: ({ active }) => (
+    <svg aria-label="Posts" color={active ? "#262626" : "#8e8e8e"} fill={active ? "#262626" : "#8e8e8e"} height="12" role="img" viewBox="0 0 24 24" width="12">
+      <rect fill="none" height="18" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" width="18" x="3" y="3"></rect>
+      <line fill="none" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" x1="9.015" x2="9.015" y1="3" y2="21"></line>
+      <line fill="none" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" x1="14.985" x2="14.985" y1="3" y2="21"></line>
+      <line fill="none" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" x1="21" x2="3" y1="9.015" y2="9.015"></line>
+      <line fill="none" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" x1="21" x2="3" y1="14.985" y2="14.985"></line>
+    </svg>
+  ),
+  Settings: () => (
+    <svg aria-label="Options" color="#262626" fill="#262626" height="24" role="img" viewBox="0 0 24 24" width="24">
+      <circle cx="12" cy="12" fill="none" r="8.635" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2"></circle>
+      <path d="M14.232 3.656a1.269 1.269 0 01-.796-.66L12.93 2h-1.86l-.505.996a1.269 1.269 0 01-.796.66m-.001 16.688a1.269 1.269 0 01.796.66l.505.996h1.862l.505-.996a1.269 1.269 0 01.796-.66M3.656 9.768a1.269 1.269 0 01-.66.796L2 11.07v1.862l.996.505a1.269 1.269 0 01.66.796m16.688-.001a1.269 1.269 0 01.66-.796L22 12.93v-1.86l-.996-.505a1.269 1.269 0 01-.66-.796M7.678 4.522a1.269 1.269 0 01-1.03.096l-1.06-.348L4.27 5.587l.348 1.062a1.269 1.269 0 01-.096 1.03m11.8 11.799a1.269 1.269 0 011.03-.096l1.06.348 1.318-1.317-.348-1.062a1.269 1.269 0 01.096-1.03m-14.956.001a1.269 1.269 0 01.096 1.03l-.348 1.06 1.317 1.318 1.062-.348a1.269 1.269 0 011.03.096m11.799-11.8a1.269 1.269 0 01-.096-1.03l.348-1.06-1.317-1.318-1.062.348a1.269 1.269 0 01-1.03-.096" fill="none" stroke="currentColor" strokeLinejoin="round" strokeWidth="2"></path>
+    </svg>
+  )
+};
 
 const Profile = () => {
   const { user, updateUser } = useAuth();
@@ -11,7 +31,7 @@ const Profile = () => {
     name: user?.name || '',
     age: user?.age || '',
     gender: user?.gender || '',
-    lookingFor: user?.lookingFor?.[0] || '', // convert array to string for select
+    lookingFor: user?.lookingFor?.[0] || '',
     bio: user?.bio || '',
     profilePicture: null,
   });
@@ -19,12 +39,44 @@ const Profile = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
+  
+  // To display user posts grid
+  const [userPosts, setUserPosts] = useState([]);
+  const [postsLoading, setPostsLoading] = useState(true);
+
+  useEffect(() => {
+    if (user) {
+      fetchUserPosts();
+    }
+  }, [user]);
+
+  const fetchUserPosts = async () => {
+    try {
+      setPostsLoading(true);
+      const response = await getPosts();
+      // Filter for this user's posts
+      const myPosts = response.data.filter(p => p.user?._id === user._id);
+      setUserPosts(myPosts);
+    } catch (err) {
+      console.error('Failed to fetch user posts:', err);
+    } finally {
+      setPostsLoading(false);
+    }
+  };
 
   const getProfilePictureUrl = () => {
     if (user?.profilePicture && user.profilePicture !== 'default-avatar.png') {
       return config.getUploadUrl(user.profilePicture);
     }
     return '/default-avatar.png';
+  };
+
+  const getMediaUrl = (post) => {
+    const fileName = post.media || post.image;
+    if (fileName && fileName !== 'default-avatar.png') {
+      return config.getUploadUrl(fileName);
+    }
+    return null;
   };
 
   const handleChange = (e) => {
@@ -39,9 +91,7 @@ const Profile = () => {
     if (file) {
       setFormData(prev => ({ ...prev, profilePicture: file }));
       const reader = new FileReader();
-      reader.onloadend = () => {
-        setPreview(reader.result);
-      };
+      reader.onloadend = () => setPreview(reader.result);
       reader.readAsDataURL(file);
     }
   };
@@ -62,169 +112,149 @@ const Profile = () => {
     } else {
       setError(result.error);
     }
-
     setLoading(false);
   };
 
-  // Helper to format lookingFor display
-  const formatLookingFor = () => {
-    if (!user?.lookingFor || user.lookingFor.length === 0) return 'Anyone';
-    if (user.lookingFor[0] === 'Any') return 'Anyone';
-    if (user.lookingFor[0] === 'Male') return 'Men';
-    if (user.lookingFor[0] === 'Female') return 'Women';
-    return user.lookingFor[0];
-  };
-
-  if (!user) {
-    return <Spinner />;
-  }
+  if (!user) return <div className="ig-loading-container"><Spinner /></div>;
 
   return (
-    <div className="profile-page">
-      <div className="profile-cover">
-        <div className="cover-placeholder"></div>
-      </div>
-
-      <div className="profile-content">
-        <div className="profile-avatar-section">
-          <img
-            src={getProfilePictureUrl()}
-            alt={user.name}
-            className="profile-avatar-large"
-          />
-          {!isEditing && (
-            <button
-              className="edit-profile-btn"
-              onClick={() => setIsEditing(true)}
-            >
-              Edit Profile
-            </button>
-          )}
+    <div className="ig-profile-page">
+      <div className="ig-profile-header">
+        
+        {/* Left: Avatar */}
+        <div className="ig-profile-avatar-wrapper">
+          <div className="ig-profile-avatar-inner">
+            <img src={getProfilePictureUrl()} alt={user.name} />
+          </div>
         </div>
 
-        <div className="profile-info">
-          <h1>{user.name}</h1>
-          <p className="profile-details">
-            {user.age} years • {user.gender}
-          </p>
-          <p className="profile-bio">{user.bio || 'No bio yet. Add one!'}</p>
-          <p className="profile-looking-for">
-            <strong>Interested in:</strong> {formatLookingFor()}
-          </p>
-          <div className="profile-stats">
-            <div className="stat">
-              <span className="stat-value">0</span>
-              <span className="stat-label">Posts</span>
+        {/* Right: Info */}
+        <div className="ig-profile-info-wrapper">
+          <div className="ig-profile-username-row">
+            <h2>{user.name?.split(' ').join('_').toLowerCase() || 'user'}</h2>
+            <div className="ig-profile-actions">
+              <button className="btn-secondary ig-edit-btn" onClick={() => setIsEditing(true)}>Edit profile</button>
+              <button className="ig-settings-btn"><Icons.Settings /></button>
             </div>
-            <div className="stat">
-              <span className="stat-value">0</span>
-              <span className="stat-label">Followers</span>
-            </div>
-            <div className="stat">
-              <span className="stat-value">0</span>
-              <span className="stat-label">Following</span>
-            </div>
+          </div>
+
+          <div className="ig-profile-stats">
+            <span><span className="font-weight-semibold">{userPosts.length}</span> posts</span>
+            <span><span className="font-weight-semibold">124</span> followers</span>
+            <span><span className="font-weight-semibold">150</span> following</span>
+          </div>
+
+          <div className="ig-profile-bio-section">
+            <h1 className="ig-profile-fullname">{user.name}</h1>
+            {user.gender && user.age && <div className="ig-profile-details text-secondary">{user.age} • {user.gender}</div>}
+            {user.bio && <div className="ig-profile-bio">{user.bio}</div>}
           </div>
         </div>
       </div>
 
-      {isEditing && (
-        <div className="edit-profile-modal">
-          <div className="edit-profile-card">
-            <div className="edit-header">
-              <h2>Edit Profile</h2>
-              <button className="close-btn" onClick={() => setIsEditing(false)}>
-                ×
-              </button>
-            </div>
+      {/* Mobile Bio Section (shows below stats on mobile) */}
+      <div className="ig-profile-bio-mobile">
+        <h1 className="ig-profile-fullname">{user.name}</h1>
+        {user.gender && user.age && <div className="ig-profile-details text-secondary">{user.age} • {user.gender}</div>}
+        {user.bio && <div className="ig-profile-bio">{user.bio}</div>}
+      </div>
 
-            {error && <div className="error-message">{error}</div>}
-            {success && <div className="success-message">{success}</div>}
+      <div className="ig-profile-tabs">
+        <div className="ig-profile-tab active">
+          <Icons.Grid active={true} /> POSTS
+        </div>
+      </div>
 
-            <form onSubmit={handleSubmit}>
-              <div className="form-group">
-                <label>Profile Picture</label>
-                <input
-                  type="file"
-                  accept="image/*"
-                  onChange={handleFileChange}
-                  className="file-input"
-                />
-                {preview && (
-                  <div className="preview-container">
-                    <img src={preview} alt="Preview" className="preview-image" />
-                  </div>
+      <div className="ig-profile-grid">
+        {postsLoading ? (
+          <div className="ig-profile-loading"><Spinner /></div>
+        ) : userPosts.length > 0 ? (
+          userPosts.map(post => {
+            const mediaUrl = getMediaUrl(post);
+            const isVideo = post.mediaType === 'video' || (mediaUrl && mediaUrl.endsWith('.mp4'));
+            
+            if (!mediaUrl) return null;
+
+            return (
+              <div key={post._id} className="ig-profile-grid-item">
+                {isVideo ? (
+                  <video src={mediaUrl} muted />
+                ) : (
+                  <img src={mediaUrl} alt="Post thumbnail" />
                 )}
-                <small>Leave empty to keep current picture</small>
-              </div>
-
-              <div className="form-group">
-                <label>Full Name</label>
-                <input
-                  type="text"
-                  name="name"
-                  value={formData.name}
-                  onChange={handleChange}
-                  placeholder="Enter your full name"
-                />
-              </div>
-
-              <div className="form-row">
-                <div className="form-group">
-                  <label>Age</label>
-                  <input
-                    type="number"
-                    name="age"
-                    value={formData.age}
-                    onChange={handleChange}
-                    min="18"
-                    max="120"
-                    placeholder="Age"
-                  />
-                </div>
-                <div className="form-group">
-                  <label>Gender</label>
-                  <select
-                    name="gender"
-                    value={formData.gender}
-                    onChange={handleChange}
-                  >
-                    <option value="Male">Male</option>
-                    <option value="Female">Female</option>
-                    <option value="Non-binary">Non-binary</option>
-                    <option value="Prefer not to say">Prefer not to say</option>
-                    <option value="Other">Other</option>
-                  </select>
+                <div className="ig-profile-grid-overlay">
+                  <span>❤️ {post.likes?.length || 0}</span>
+                  <span>💬 {post.comments?.length || 0}</span>
                 </div>
               </div>
+            );
+          })
+        ) : (
+          <div className="ig-profile-empty">
+            <div className="ig-profile-empty-icon">📷</div>
+            <h3>No Posts Yet</h3>
+          </div>
+        )}
+      </div>
 
-              
-               
+      {/* Edit Profile Modal */}
+      {isEditing && (
+        <div className="ig-modal-backdrop">
+          <div className="ig-modal-content ig-edit-modal">
+            <div className="ig-modal-header">
+              <h3>Edit Profile</h3>
+              <button className="ig-modal-close-btn" onClick={() => setIsEditing(false)}>✕</button>
+            </div>
+            
+            <div className="ig-modal-body">
+              {error && <div className="error-message">{error}</div>}
+              {success && <div className="success-message">{success}</div>}
 
-              <div className="form-group">
-                <label>Bio</label>
-                <textarea
-                  name="bio"
-                  value={formData.bio}
-                  onChange={handleChange}
-                  placeholder="Tell others about yourself..."
-                  rows="4"
-                />
-              </div>
+              <form onSubmit={handleSubmit} className="ig-edit-form">
+                <div className="ig-edit-avatar-section">
+                  <img src={preview || getProfilePictureUrl()} alt="Preview" className="ig-edit-avatar-preview" />
+                  <div className="ig-edit-avatar-input">
+                    <span className="ig-edit-username">{user.name?.split(' ').join('_').toLowerCase()}</span>
+                    <label className="ig-change-photo-btn">
+                      Change profile photo
+                      <input type="file" accept="image/*" onChange={handleFileChange} style={{ display: 'none' }} />
+                    </label>
+                  </div>
+                </div>
 
-              <div className="edit-actions">
-                <button type="submit" disabled={loading}>
-                  {loading ? 'Saving...' : 'Save Changes'}
+                <div className="ig-edit-form-group">
+                  <label>Name</label>
+                  <input type="text" name="name" value={formData.name} onChange={handleChange} placeholder="Name" />
+                </div>
+
+                <div className="ig-edit-form-row">
+                  <div className="ig-edit-form-group">
+                    <label>Age</label>
+                    <input type="number" name="age" value={formData.age} onChange={handleChange} placeholder="Age" min="18" max="120" />
+                  </div>
+                  <div className="ig-edit-form-group">
+                    <label>Gender</label>
+                    <select name="gender" value={formData.gender} onChange={handleChange}>
+                      <option value="Male">Male</option>
+                      <option value="Female">Female</option>
+                      <option value="Non-binary">Non-binary</option>
+                      <option value="Other">Other</option>
+                      <option value="Prefer not to say">Prefer not to say</option>
+                    </select>
+                  </div>
+                </div>
+
+                <div className="ig-edit-form-group">
+                  <label>Bio</label>
+                  <textarea name="bio" value={formData.bio} onChange={handleChange} rows="3" />
+                  <div className="ig-textarea-count">{formData.bio.length} / 150</div>
+                </div>
+
+                <button type="submit" className="btn-primary" disabled={loading}>
+                  {loading ? 'Saving...' : 'Submit'}
                 </button>
-                <button
-                  type="button"
-                  className="btn-secondary"
-                  onClick={() => setIsEditing(false)}
-                >
-                  Cancel
-                </button>
-              </div>
-            </form>
+              </form>
+            </div>
           </div>
         </div>
       )}
