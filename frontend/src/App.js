@@ -10,7 +10,6 @@ import AdminSidebar from './components/admin/AdminSidebar';
 import VerticalNavbar from './components/VerticalNavbar';
 import BottomNav from './components/BottomNav';
 import GlobalCallOverlay from './components/GlobalCallOverlay';
-import Landing from './pages/Landing';
 import Register from './pages/Register';
 import Login from './pages/Login';
 import Dashboard from './pages/Dashboard';
@@ -63,19 +62,12 @@ function App() {
                 <div className="container">
                   <Routes>
                     {/* Public Routes */}
-                    <Route path="/" element={<Landing />} />
+                    <Route path="/" element={<Navigate to="/feed" replace />} />
                     <Route path="/register" element={<Register />} />
                     <Route path="/login" element={<Login />} />
 
-                    {/* Protected User Routes */}
-                    <Route
-                      path="/feed"
-                      element={
-                        <PrivateRoute>
-                          <Feed />
-                        </PrivateRoute>
-                      }
-                    />
+                    {/* Public feed route: anyone can view the feed */}
+                    <Route path="/feed" element={<Feed />} />
                     <Route
                       path="/dashboard"
                       element={
@@ -172,7 +164,7 @@ function App() {
                     />
 
                     {/* Catch all */}
-                    <Route path="*" element={<Navigate to="/" />} />
+                    <Route path="*" element={<Navigate to="/feed" replace />} />
                   </Routes>
                 </div>
                 <BottomNav />

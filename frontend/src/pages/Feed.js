@@ -1,5 +1,6 @@
 // Feed.js
 import React, { useState, useEffect, useRef } from 'react';
+import { Link } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import Post from '../components/Post';
 import { getPosts, createPost, deletePost } from '../utils/postApi';
@@ -8,6 +9,7 @@ import './Feed.css';
 
 const Feed = () => {
   const { user } = useAuth();
+  const canPost = Boolean(user);
   const [posts, setPosts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
@@ -132,19 +134,35 @@ const Feed = () => {
 
   return (
     <div className="tiktok-feed" ref={feedContainerRef}>
-      {/* Floating Create Post Button */}
-      <button 
-        className="create-post-float" 
-        onClick={() => document.getElementById('create-post-modal').style.display = 'flex'}
-        aria-label="Create new post"
-      >
-        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-          <path d="M12 4V20M20 12H4" stroke="white" strokeWidth="2" strokeLinecap="round"/>
-        </svg>
-      </button>
+      {/* Public feed hero for unauthenticated visitors */}
+      {!canPost && (
+        <div className="feed-guest-banner">
+          <div>
+            <h2>Explore the community feed</h2>
+            <p>Browse posts, videos and stories. Sign in to like, comment, or share your own content.</p>
+          </div>
+          <div className="feed-guest-actions">
+            <Link to="/login" className="btn btn-outline">Sign In</Link>
+            <Link to="/register" className="btn btn-secondary">Get Started</Link>
+          </div>
+        </div>
+      )}
 
-      {/* Modal for creating post */}
-      <div id="create-post-modal" className="create-post-modal" style={{ display: 'none' }}>
+      {canPost && (
+        <>
+          {/* Floating Create Post Button */}
+          <button 
+            className="create-post-float" 
+            onClick={() => document.getElementById('create-post-modal').style.display = 'flex'}
+            aria-label="Create new post"
+          >
+            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M12 4V20M20 12H4" stroke="white" strokeWidth="2" strokeLinecap="round"/>
+            </svg>
+          </button>
+
+          {/* Modal for creating post */}
+          <div id="create-post-modal" className="create-post-modal" style={{ display: 'none' }}>
         <div className="create-post-modal-backdrop" onClick={() => document.getElementById('create-post-modal').style.display = 'none'} />
         <div className="create-post-modal-content">
           <div className="modal-header">
@@ -213,6 +231,8 @@ const Feed = () => {
           </div>
         </div>
       </div>
+        </>
+      )}
 
       {error && (
         <div className="error-message-tiktok">

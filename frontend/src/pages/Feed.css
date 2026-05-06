@@ -1,347 +1,582 @@
-/* Feed.css */
-* {
+/* Feed.css - Professional TikTok-Style Feed | FIXED SCROLL ARCHITECTURE */
+
+/* ========================================
+   CSS VARIABLES & THEME (Sync with App.css)
+   ======================================== */
+:root {
+  /* Colors */
+  --tiktok-black: #000000;
+  --tiktok-dark: #121212;
+  --tiktok-darker: #0a0a0a;
+  --tiktok-gray: #8e8e93;
+  --tiktok-light-gray: #f5f5f5;
+  --tiktok-white: #ffffff;
+  --tiktok-cyan: #00f2ea;
+  --tiktok-pink: #ff0050;
+  --tiktok-red: #fe2c55;
+  
+  /* Gradients & Shadows */
+  --tiktok-gradient: linear-gradient(45deg, var(--tiktok-cyan), var(--tiktok-pink));
+  --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.25);
+  --shadow-lg: 0 8px 30px rgba(0, 0, 0, 0.35);
+  --shadow-glow: 0 0 20px rgba(0, 242, 234, 0.3);
+  
+  /* Spacing & Radius */
+  --spacing-sm: 8px;
+  --spacing-md: 16px;
+  --spacing-lg: 24px;
+  --spacing-xl: 32px;
+  --radius-md: 12px;
+  --radius-lg: 20px;
+  --radius-full: 50%;
+  
+  /* Typography */
+  --font-primary: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  --font-size-sm: 13px;
+  --font-size-md: 15px;
+  --font-size-lg: 17px;
+  
+  /* Transitions & Z-Index */
+  --transition-normal: 300ms ease;
+  --z-floating: 300;
+  --z-modal: 400;
+  --z-overlay: 200;
+}
+
+/* ========================================
+   GLOBAL RESET
+   ======================================== */
+*, *::before, *::after {
   margin: 0;
   padding: 0;
   box-sizing: border-box;
 }
 
+/* ========================================
+   FEED CONTAINER - SINGLE SCROLL SOURCE ✅
+   ======================================== */
 .tiktok-feed {
+  /* Layout */
   position: relative;
-  height: 100vh;
   width: 100%;
+  max-width: 480px;
+  height: 100vh;
+  margin: 0 auto;
+  
+  /* Background & Text */
+  background: var(--tiktok-black);
+  color: var(--tiktok-white);
+  font-family: var(--font-primary);
+  
+  /* ✅ CRITICAL: Only this container handles scrolling */
   overflow-y: scroll;
+  overflow-x: hidden;
   scroll-snap-type: y mandatory;
   scroll-behavior: smooth;
-  background: #FEF9E6;
+  
+  /* Hide scrollbar */
   scrollbar-width: none;
   -ms-overflow-style: none;
+  
+  /* Performance */
+  will-change: scroll-position;
+  transform: translateZ(0);
+  contain: layout style;
 }
 
 .tiktok-feed::-webkit-scrollbar {
   display: none;
 }
 
+/* ========================================
+   POST SNAP ITEM - PURE SNAP POINT ✅
+   ======================================== */
 .tiktok-post-container {
+  /* ✅ CRITICAL: This is the scroll-snap child */
+  width: 100%;
+  height: 100vh;
   scroll-snap-align: start;
   scroll-snap-stop: always;
-  height: 100vh;
-  width: 100%;
+  
+  /* Layout - NO overflow, pure positioning */
+  position: relative;
   display: flex;
   align-items: center;
   justify-content: center;
+  overflow: visible;
+  
+  /* Performance */
+  contain: layout style paint;
+  will-change: transform;
+  transform: translateZ(0);
+  
+  /* Subtle entrance animation */
+  animation: postFadeIn var(--transition-normal);
 }
 
-/* Floating create button */
+@keyframes postFadeIn {
+  from { opacity: 0.9; }
+  to { opacity: 1; }
+}
+
+/* ========================================
+   FLOATING CREATE POST BUTTON
+   ======================================== */
 .create-post-float {
   position: fixed;
-  bottom: 80px;
-  right: 24px;
+  bottom: var(--spacing-xl);
+  right: var(--spacing-md);
   width: 56px;
   height: 56px;
-  border-radius: 50%;
-  background: #FF6B6B;
+  border: none;
+  border-radius: var(--radius-full);
+  background: var(--tiktok-gradient);
+  color: var(--tiktok-white);
+  cursor: pointer;
   display: flex;
   align-items: center;
   justify-content: center;
-  border: none;
-  cursor: pointer;
-  z-index: 100;
-  box-shadow: 0 4px 12px rgba(255, 107, 107, 0.3);
-  transition: all 0.2s ease;
+  box-shadow: var(--shadow-lg), var(--shadow-glow);
+  transition: transform var(--transition-normal), box-shadow var(--transition-normal);
+  z-index: var(--z-floating);
+  animation: pulse 2s infinite;
 }
 
 .create-post-float:hover {
-  transform: scale(1.05);
-  background: #E55B5B;
-  box-shadow: 0 6px 16px rgba(255, 107, 107, 0.4);
+  transform: scale(1.1);
+  box-shadow: var(--shadow-lg), 0 0 35px rgba(255, 0, 80, 0.5);
 }
 
-/* Modal for creating post */
+.create-post-float:active {
+  transform: scale(0.95);
+}
+
+@keyframes pulse {
+  0%, 100% { box-shadow: var(--shadow-lg), 0 0 20px rgba(0, 242, 234, 0.3); }
+  50% { box-shadow: var(--shadow-lg), 0 0 35px rgba(255, 0, 80, 0.5); }
+}
+
+/* ========================================
+   CREATE POST MODAL - FIXED POSITIONING
+   ======================================== */
 .create-post-modal {
   position: fixed;
   top: 0;
   left: 0;
-  right: 0;
-  bottom: 0;
+  width: 100%;
+  height: 100%;
   display: flex;
   align-items: center;
   justify-content: center;
-  z-index: 1000;
-  backdrop-filter: blur(8px);
-  background: rgba(0, 0, 0, 0.5);
-  animation: fadeIn 0.2s ease;
+  z-index: var(--z-modal);
+  animation: modalFadeIn var(--transition-normal);
 }
 
 .create-post-modal-backdrop {
   position: absolute;
-  inset: 0;
-  cursor: pointer;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.85);
+  backdrop-filter: blur(8px);
 }
 
 .create-post-modal-content {
   position: relative;
-  background: white;
-  border-radius: 32px;
   width: 90%;
-  max-width: 540px;
-  padding: 28px;
-  box-shadow: 0 20px 35px rgba(0, 0, 0, 0.2);
-  animation: slideUp 0.3s cubic-bezier(0.2, 0.9, 0.4, 1.1);
+  max-width: 500px;
+  max-height: 85vh;
+  background: var(--tiktok-dark);
+  border-radius: var(--radius-lg);
+  padding: var(--spacing-lg);
+  box-shadow: var(--shadow-lg);
+  animation: modalSlideUp var(--transition-normal);
+  overflow-y: auto;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+@keyframes modalFadeIn { from { opacity: 0; } to { opacity: 1; } }
+@keyframes modalSlideUp {
+  from { opacity: 0; transform: translateY(30px) scale(0.98); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
 }
 
 .modal-header {
   display: flex;
-  justify-content: space-between;
   align-items: center;
-  margin-bottom: 20px;
+  justify-content: space-between;
+  padding-bottom: var(--spacing-md);
+  margin-bottom: var(--spacing-md);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
 }
 
 .modal-header h3 {
-  font-size: 1.5rem;
+  font-size: var(--font-size-lg);
   font-weight: 600;
-  color: #2C3E50;
-  margin: 0;
+  background: var(--tiktok-gradient);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
 }
 
 .close-modal {
   background: none;
   border: none;
-  width: 36px;
-  height: 36px;
-  border-radius: 50%;
+  color: var(--tiktok-gray);
+  cursor: pointer;
+  padding: var(--spacing-sm);
+  border-radius: var(--radius-md);
+  transition: all var(--transition-normal);
   display: flex;
   align-items: center;
   justify-content: center;
-  cursor: pointer;
-  color: #7A8B9F;
-  transition: all 0.2s;
 }
 
 .close-modal:hover {
-  background: #F5F5F5;
-  color: #FF6B6B;
-  transform: rotate(90deg);
+  color: var(--tiktok-white);
+  background: rgba(255, 255, 255, 0.1);
 }
 
+/* Textarea */
 .post-textarea {
   width: 100%;
-  border: 1px solid #E2E8F0;
-  border-radius: 24px;
-  padding: 14px 16px;
-  font-size: 1rem;
-  font-family: inherit;
+  min-height: 100px;
+  padding: var(--spacing-md);
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: var(--radius-md);
+  color: var(--tiktok-white);
+  font-size: var(--font-size-md);
+  font-family: var(--font-primary);
   resize: vertical;
-  transition: border-color 0.2s;
+  transition: border-color var(--transition-normal), background var(--transition-normal);
+  margin-bottom: var(--spacing-md);
 }
+
+.post-textarea::placeholder { color: var(--tiktok-gray); }
 
 .post-textarea:focus {
   outline: none;
-  border-color: #FF6B6B;
+  border-color: var(--tiktok-cyan);
+  box-shadow: 0 0 0 3px rgba(0, 242, 234, 0.2);
+  background: rgba(255, 255, 255, 0.12);
 }
 
-.media-upload {
-  margin: 20px 0;
-}
+/* Media Upload */
+.media-upload { margin-bottom: var(--spacing-md); }
 
 .upload-btn {
-  display: inline-flex;
+  display: flex;
   align-items: center;
-  gap: 8px;
-  background: #F5F5F5;
-  padding: 10px 20px;
-  border-radius: 40px;
+  gap: var(--spacing-sm);
+  padding: var(--spacing-sm) var(--spacing-md);
+  background: rgba(255, 255, 255, 0.08);
+  border: 2px dashed rgba(255, 255, 255, 0.2);
+  border-radius: var(--radius-md);
+  color: var(--tiktok-gray);
+  font-size: var(--font-size-sm);
   cursor: pointer;
-  color: #5A6B7C;
-  font-weight: 500;
-  transition: background 0.2s;
+  transition: all var(--transition-normal);
+  width: fit-content;
 }
 
 .upload-btn:hover {
-  background: #FF6B6B;
-  color: white;
+  border-color: var(--tiktok-cyan);
+  color: var(--tiktok-white);
+  background: rgba(0, 242, 234, 0.1);
 }
 
+/* Preview Container */
 .preview-container {
-  margin-top: 12px;
   position: relative;
-  border-radius: 20px;
+  margin-top: var(--spacing-md);
+  border-radius: var(--radius-md);
   overflow: hidden;
-  max-height: 200px;
-  background: #F5F5F5;
-  display: inline-block;
+  max-height: 300px;
+  background: var(--tiktok-darker);
 }
 
 .preview-container img,
 .preview-container video {
-  max-width: 100%;
-  max-height: 180px;
-  object-fit: cover;
-  border-radius: 16px;
+  width: 100%;
+  height: auto;
+  max-height: 300px;
+  object-fit: contain;
+  display: block;
 }
 
 .remove-preview {
   position: absolute;
-  top: 8px;
-  right: 8px;
-  background: rgba(0, 0, 0, 0.6);
-  backdrop-filter: blur(4px);
-  border: none;
+  top: var(--spacing-sm);
+  right: var(--spacing-sm);
   width: 28px;
   height: 28px;
-  border-radius: 50%;
+  border: none;
+  border-radius: var(--radius-full);
+  background: rgba(254, 44, 85, 0.9);
+  color: white;
+  cursor: pointer;
   display: flex;
   align-items: center;
   justify-content: center;
-  cursor: pointer;
-  color: white;
-  transition: background 0.2s;
+  transition: all var(--transition-normal);
 }
 
 .remove-preview:hover {
-  background: #FF6B6B;
+  background: var(--tiktok-red);
+  transform: scale(1.1);
 }
 
+/* Modal Actions */
 .modal-actions {
-  margin-top: 24px;
+  display: flex;
+  justify-content: flex-end;
+  padding-top: var(--spacing-sm);
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
 }
 
 .post-submit-btn {
-  width: 100%;
-  padding: 12px;
-  background: #FF6B6B;
+  padding: var(--spacing-sm) var(--spacing-xl);
+  background: var(--tiktok-gradient);
+  color: var(--tiktok-white);
   border: none;
-  border-radius: 40px;
-  color: white;
+  border-radius: var(--radius-full);
+  font-size: var(--font-size-md);
   font-weight: 600;
-  font-size: 1rem;
   cursor: pointer;
-  transition: all 0.2s;
+  transition: all var(--transition-normal);
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-sm);
+  min-width: 80px;
+  justify-content: center;
 }
 
 .post-submit-btn:hover:not(:disabled) {
-  background: #E55B5B;
   transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(255, 107, 107, 0.3);
+  box-shadow: var(--shadow-md), var(--shadow-glow);
 }
 
 .post-submit-btn:disabled {
-  opacity: 0.6;
+  opacity: 0.5;
   cursor: not-allowed;
   transform: none;
 }
 
 .btn-spinner {
-  display: inline-block;
-  width: 20px;
-  height: 20px;
+  width: 18px;
+  height: 18px;
   border: 2px solid rgba(255, 255, 255, 0.3);
-  border-top-color: white;
-  border-radius: 50%;
-  animation: spin 0.6s linear infinite;
+  border-top-color: var(--tiktok-white);
+  border-radius: var(--radius-full);
+  animation: spin 0.8s linear infinite;
 }
 
-@keyframes spin {
-  to { transform: rotate(360deg); }
-}
+@keyframes spin { to { transform: rotate(360deg); } }
 
+/* ========================================
+   ERROR & EMPTY STATES
+   ======================================== */
 .error-message-tiktok {
   position: fixed;
-  top: 20px;
+  top: var(--spacing-md);
   left: 50%;
   transform: translateX(-50%);
-  background: #FFEBEE;
-  color: #C62828;
-  padding: 12px 24px;
-  border-radius: 60px;
+  width: 90%;
+  max-width: 400px;
+  padding: var(--spacing-sm) var(--spacing-md);
+  background: linear-gradient(135deg, rgba(254, 44, 85, 0.15), rgba(255, 0, 80, 0.1));
+  border: 1px solid rgba(254, 44, 85, 0.3);
+  border-left: 4px solid var(--tiktok-red);
+  border-radius: var(--radius-md);
+  color: var(--tiktok-white);
+  font-size: var(--font-size-sm);
   display: flex;
   align-items: center;
-  gap: 12px;
-  z-index: 200;
-  font-weight: 500;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-  backdrop-filter: blur(8px);
+  gap: var(--spacing-sm);
+  animation: slideInError var(--transition-normal);
+  z-index: var(--z-overlay);
 }
 
-.error-icon {
-  font-size: 1.2rem;
+@keyframes slideInError {
+  from { opacity: 0; transform: translate(-50%, -20px); }
+  to { opacity: 1; transform: translate(-50%, 0); }
 }
+
+.error-icon { font-size: var(--font-size-lg); }
 
 .error-close {
+  margin-left: auto;
   background: none;
   border: none;
-  color: #C62828;
-  font-size: 1.2rem;
+  color: var(--tiktok-gray);
+  font-size: var(--font-size-lg);
   cursor: pointer;
-  margin-left: 8px;
-  opacity: 0.8;
+  padding: var(--spacing-xs);
 }
 
-.error-close:hover {
-  opacity: 1;
-}
+.error-close:hover { color: var(--tiktok-white); }
 
+/* Empty State */
 .no-posts-tiktok {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 60vh;
+  padding: var(--spacing-xl);
   text-align: center;
-  background: white;
-  padding: 48px 32px;
-  border-radius: 48px;
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.05);
-  border: 1px solid rgba(0, 0, 0, 0.05);
-  width: 80%;
-  max-width: 400px;
+  color: var(--tiktok-gray);
 }
 
 .empty-state-icon {
-  font-size: 4rem;
-  margin-bottom: 20px;
-  display: inline-block;
+  font-size: 64px;
+  margin-bottom: var(--spacing-md);
+  animation: float 3s ease-in-out infinite;
+}
+
+@keyframes float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-10px); }
 }
 
 .no-posts-tiktok p {
-  font-size: 1rem;
-  color: #7A8B9F;
-  margin-bottom: 16px;
+  font-size: var(--font-size-lg);
+  line-height: 1.5;
 }
 
+/* ========================================
+   LOADING STATE
+   ======================================== */
 .loading-container {
-  height: 100vh;
   display: flex;
   align-items: center;
   justify-content: center;
-  background: #FEF9E6;
+  height: 100vh;
+  background: var(--tiktok-black);
 }
 
-@media (max-width: 768px) {
+/* Spinner fallback if component doesn't provide styles */
+.spinner, .btn-spinner {
+  width: 48px;
+  height: 48px;
+  border: 4px solid rgba(255, 255, 255, 0.1);
+  border-left-color: var(--tiktok-cyan);
+  border-radius: var(--radius-full);
+  animation: spin 1s linear infinite;
+}
+
+/* ========================================
+   RESPONSIVE DESIGN
+   ======================================== */
+@media (min-width: 481px) {
+  .tiktok-feed {
+    border-left: 1px solid rgba(255, 255, 255, 0.1);
+    border-right: 1px solid rgba(255, 255, 255, 0.1);
+    box-shadow: var(--shadow-lg);
+  }
+  
   .create-post-float {
-    bottom: 70px;
-    right: 20px;
-    width: 48px;
-    height: 48px;
+    right: calc(50% - 240px + var(--spacing-md));
   }
+}
+
+@media (max-height: 700px) {
   .create-post-modal-content {
-    padding: 20px;
+    max-height: 90vh;
+    padding: var(--spacing-md);
   }
-  .modal-header h3 {
-    font-size: 1.2rem;
+  .post-textarea { min-height: 80px; }
+}
+
+/* ========================================
+   ACCESSIBILITY
+   ======================================== */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+  .create-post-float, .empty-state-icon { animation: none; }
+}
+
+/* Focus visible for keyboard nav */
+.create-post-float:focus-visible,
+.close-modal:focus-visible,
+.upload-btn:focus-visible,
+.remove-preview:focus-visible,
+.post-submit-btn:focus-visible,
+.error-close:focus-visible,
+.post-textarea:focus-visible {
+  outline: 2px solid var(--tiktok-cyan);
+  outline-offset: 2px;
+}
+
+/* High contrast mode */
+@media (prefers-contrast: high) {
+  :root {
+    --tiktok-gray: #cccccc;
+    --tiktok-dark: #000000;
+  }
+  .create-post-modal-content, .post-textarea {
+    border-color: var(--tiktok-white);
   }
 }
 
-@keyframes fadeIn {
-  from { opacity: 0; }
-  to { opacity: 1; }
+/* ========================================
+   PERFORMANCE OPTIMIZATIONS ✅
+   ======================================== */
+/* GPU acceleration for smooth scrolling */
+.tiktok-feed,
+.tiktok-post-container,
+.create-post-modal-content {
+  will-change: transform;
+  transform: translateZ(0);
+  backface-visibility: hidden;
 }
 
+/* Prevent layout shift on media load */
+.preview-container img,
+.preview-container video {
+  aspect-ratio: 9/16;
+  background: linear-gradient(135deg, var(--tiktok-darker), var(--tiktok-dark));
+}
+
+/* Efficient animations - only transform/opacity */
+@keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
 @keyframes slideUp {
-  from {
-    opacity: 0;
-    transform: translateY(20px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* Apply to dynamically added posts */
+.tiktok-post-container {
+  animation: fadeIn var(--transition-normal);
+}
+
+/* ========================================
+   DARK/LIGHT MODE SUPPORT
+   ======================================== */
+[data-theme='light'] .tiktok-feed {
+  background: var(--tiktok-light-gray);
+  color: var(--tiktok-black);
+}
+
+[data-theme='light'] .create-post-modal-content,
+[data-theme='light'] .post-textarea {
+  background: var(--tiktok-white);
+  color: var(--tiktok-black);
+  border-color: rgba(0, 0, 0, 0.1);
+}
+
+[data-theme='light'] .post-textarea::placeholder {
+  color: var(--tiktok-gray);
+}
+
+[data-theme='light'] .upload-btn {
+  background: rgba(0, 0, 0, 0.05);
+  border-color: rgba(0, 0, 0, 0.2);
+  color: var(--tiktok-dark);
 }

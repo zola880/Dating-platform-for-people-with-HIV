@@ -363,11 +363,23 @@ hiv-connect-pro/
 
 ## 🌐 Environment Variables
 
+Use the example files in each package and keep actual credentials out of source control.
+
+Backend example: `backend/.env.example`
+Frontend example: `frontend/.env.example`
+
+Backend `.env` example:
 ```env
-MONGO_URI=mongodb://127.0.0.1:27017/HIVmeddia
-JWT_SECRET=zelalemsecret123
 PORT=5001
-NODE_ENV=development
+MONGODB_URI=mongodb://127.0.0.1:27017/safe-connect
+JWT_SECRET=replace_with_a_secure_secret
+FRONTEND_URL=http://localhost:3000
+```
+
+Frontend `.env` example:
+```env
+REACT_APP_API_URL=http://localhost:5001/api
+REACT_APP_SOCKET_URL=http://localhost:5001
 ```
 
 ## 📱 Features in Detail

@@ -4,13 +4,26 @@ const cors = require('cors');
 const path = require('path');
 const http = require('http');
 const { Server } = require('socket.io');
-const connectDB = require('./config/db');
+const mongoose = require('mongoose');
+
 const postRoutes = require('./routes/postRoutes');
 const Message = require('./models/Message');
 const adminRoutes = require('./routes/adminRoutes');
+const recommendationRoutes = require('./routes/recommendationRoutes');
 
 // Load environment variables
 dotenv.config();
+
+// ✅ FIXED MongoDB Connection (Atlas)
+const connectDB = async () => {
+  try {
+    const conn = await mongoose.connect(process.env.MONGO_URI);
+    console.log(`✅ MongoDB Connected: ${conn.connection.host}`);
+  } catch (error) {
+    console.error('❌ MongoDB connection error:', error.message);
+    process.exit(1);
+  }
+};
 
 // Connect to MongoDB
 connectDB();
@@ -18,19 +31,22 @@ connectDB();
 // Initialize Express app
 const app = express();
 const server = http.createServer(app);
+
+const frontendOrigin = process.env.FRONTEND_URL || true;
+
 const io = new Server(server, {
   cors: {
-    origin: "http://localhost:3000",
+    origin: frontendOrigin,
     methods: ["GET", "POST"]
   }
 });
 
 // Middleware
-app.use(cors());
+app.use(cors({ origin: frontendOrigin, credentials: true }));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-// Serve static files
+// Serve uploads and static assets
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 app.use('/api/admin', adminRoutes);
 
@@ -46,11 +62,19 @@ app.use('/api/posts', postRoutes);
 app.use('/api/auth', authRoutes);
 app.use('/api/users', userRoutes);
 app.use('/api/messages', messageRoutes);
+app.use('/api/recommendations', recommendationRoutes);
 
-// Root route
-app.get('/', (req, res) => {
-  res.json({ message: 'Safe Connect API is running...' });
-});
+// Serve React frontend in production
+if (process.env.NODE_ENV === 'production') {
+  app.use(express.static(path.join(__dirname, '../frontend/build')));
+  app.get('*', (req, res) => {
+    res.sendFile(path.join(__dirname, '../frontend/build', 'index.html'));
+  });
+} else {
+  app.get('/', (req, res) => {
+    res.json({ message: 'Safe Connect API is running...' });
+  });
+}
 
 // 404 handler
 app.use((req, res) => {
@@ -70,13 +94,11 @@ app.use((err, req, res, next) => {
 io.on('connection', (socket) => {
   console.log('New client connected:', socket.id);
 
-  // Join a room based on user ID
   socket.on('join', (userId) => {
     socket.join(userId);
     console.log(`User ${userId} joined room ${userId}`);
   });
 
-  // Handle new private message via socket
   socket.on('private message', async ({ senderId, receiverId, content, attachments }) => {
     try {
       const message = await Message.create({
@@ -85,9 +107,11 @@ io.on('connection', (socket) => {
         content,
         attachments: attachments || []
       });
+
       const populatedMessage = await Message.findById(message._id)
         .populate('sender', 'name profilePicture')
         .populate('receiver', 'name profilePicture');
+
       io.to(receiverId).emit('new message', populatedMessage);
       socket.emit('message sent', populatedMessage);
     } catch (error) {
@@ -95,24 +119,19 @@ io.on('connection', (socket) => {
     }
   });
 
-  // --- Call signaling handlers ---
   socket.on('call-user', ({ offer, to, from, type }) => {
-    console.log(`Call from ${from} to ${to} (${type})`);
     io.to(to).emit('incoming-call', { offer, from, type });
   });
 
   socket.on('accept-call', ({ answer, to, from }) => {
-    console.log(`Call accepted from ${from} to ${to}`);
     io.to(to).emit('call-accepted', { answer, from });
   });
 
   socket.on('reject-call', ({ to, from }) => {
-    console.log(`Call rejected from ${from} to ${to}`);
     io.to(to).emit('call-rejected', { from });
   });
 
   socket.on('end-call', ({ to, from }) => {
-    console.log(`Call ended between ${from} and ${to}`);
     io.to(to).emit('call-ended', { from });
   });
 
@@ -128,5 +147,5 @@ io.on('connection', (socket) => {
 // Start server
 const PORT = process.env.PORT || 5000;
 server.listen(PORT, () => {
-  console.log(`Server running on port ${PORT}`);
+  console.log(`🚀 Server running on port ${PORT}`);
 });

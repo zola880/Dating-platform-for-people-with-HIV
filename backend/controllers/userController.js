@@ -1,6 +1,7 @@
 const User = require('../models/User');
 const fs = require('fs');
 const path = require('path');
+const { updateUserInterests } = require('../utils/recommendation'); // new import
 
 /**
  * @desc    Get all users (for browsing)
@@ -74,10 +75,15 @@ const updateUser = async (req, res) => {
     }
 
     // Update fields that are provided
-    const updateFields = ['name', 'age', 'gender', 'bio'];
+    const updateFields = ['name', 'age', 'gender', 'bio', 'lookingFor'];
     updateFields.forEach(field => {
       if (req.body[field] !== undefined) {
-        user[field] = req.body[field];
+        // If field is lookingFor and it's a string, convert to array
+        if (field === 'lookingFor' && typeof req.body[field] === 'string') {
+          user[field] = [req.body[field]];
+        } else {
+          user[field] = req.body[field];
+        }
       }
     });
 
@@ -95,6 +101,9 @@ const updateUser = async (req, res) => {
 
     // Save updated user
     const updatedUser = await user.save();
+    
+    // Update interests based on bio (after save)
+    await updateUserInterests(updatedUser);
 
     // Return updated user data without password
     res.json({
@@ -105,6 +114,8 @@ const updateUser = async (req, res) => {
       gender: updatedUser.gender,
       bio: updatedUser.bio,
       profilePicture: updatedUser.profilePicture,
+      lookingFor: updatedUser.lookingFor,
+      interests: updatedUser.interests
     });
   } catch (error) {
     console.error('Update user error:', error);

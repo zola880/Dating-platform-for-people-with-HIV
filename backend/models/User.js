@@ -27,7 +27,7 @@ const userSchema = new mongoose.Schema(
       type: String,
       required: [true, 'Please add a password'],
       minlength: 6,
-      select: false, // Don't return password by default in queries
+      select: false,
     },
     age: {
       type: Number,
@@ -47,46 +47,64 @@ const userSchema = new mongoose.Schema(
     },
     profilePicture: {
       type: String,
-      default: 'default-avatar.png', // Default profile picture filename
-    },role: {
-  type: String,
-  enum: ['user', 'moderator', 'admin', 'superadmin'],
-  default: 'user',
-},
-status: {
-  type: String,
-  enum: ['active', 'suspended', 'banned'],
-  default: 'active',
-},
-suspendedUntil: {
-  type: Date,
-  default: null,
-},
-reports: [{
-  reportedBy: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
-  reason: String,
-  description: String,
-  createdAt: { type: Date, default: Date.now },
-  resolved: { type: Boolean, default: false },
-}],
+      default: 'default-avatar.png',
+    },
+
+    // --- Recommendation system fields ---
+    lookingFor: {
+      type: [String],
+      enum: ['Male', 'Female', 'Non-binary', 'Other', 'Any'],
+      default: ['Any']
+    },
+    interests: {
+      type: [String],
+      default: []
+    },
+    location: {
+      type: {
+        type: String,
+        enum: ['Point'],
+        default: 'Point'
+      },
+      coordinates: { type: [Number], default: [0, 0] }
+    },
+
+    // --- Admin fields ---
+    role: {
+      type: String,
+      enum: ['user', 'moderator', 'admin', 'superadmin'],
+      default: 'user',
+    },
+    status: {
+      type: String,
+      enum: ['active', 'suspended', 'banned'],
+      default: 'active',
+    },
+    suspendedUntil: {
+      type: Date,
+      default: null,
+    },
+    reports: [{
+      reportedBy: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
+      reason: String,
+      description: String,
+      createdAt: { type: Date, default: Date.now },
+      resolved: { type: Boolean, default: false },
+    }],
   },
   {
-    timestamps: true, // Automatically adds createdAt and updatedAt fields
+    timestamps: true,
   }
 );
 
 /**
  * Encrypt password using bcrypt before saving
- * This middleware runs every time a user is saved
  */
 userSchema.pre('save', async function (next) {
-  // Only hash the password if it has been modified (or is new)
   if (!this.isModified('password')) {
     return next();
   }
-
   try {
-    // Generate salt and hash password
     const salt = await bcrypt.genSalt(10);
     this.password = await bcrypt.hash(this.password, salt);
     next();
@@ -96,9 +114,7 @@ userSchema.pre('save', async function (next) {
 });
 
 /**
- * Method to compare entered password with hashed password in database
- * @param {string} enteredPassword - The password entered by user during login
- * @returns {boolean} - True if passwords match, false otherwise
+ * Compare entered password with hashed password
  */
 userSchema.methods.matchPassword = async function (enteredPassword) {
   return await bcrypt.compare(enteredPassword, this.password);

@@ -2,6 +2,7 @@ const User = require('../models/User');
 const jwt = require('jsonwebtoken');
 const fs = require('fs');
 const path = require('path');
+const { updateUserInterests } = require('../utils/recommendation'); // Import recommendation utility
 
 /**
  * Generate JWT Token
@@ -20,23 +21,18 @@ const generateToken = (id) => {
  */
 const registerUser = async (req, res) => {
   try {
-    const { name, email, password, age, gender, bio } = req.body;
+    const { name, email, password, age, gender, bio, lookingFor } = req.body;
 
     // Check if user already exists
     const userExists = await User.findOne({ email });
     if (userExists) {
-      // If file was uploaded but user exists, delete the uploaded file
-      if (req.file) {
-        fs.unlinkSync(req.file.path);
-      }
+      if (req.file) fs.unlinkSync(req.file.path);
       return res.status(400).json({ message: 'User already exists with this email' });
     }
 
     // Validate required fields
     if (!name || !email || !password || !age || !gender) {
-      if (req.file) {
-        fs.unlinkSync(req.file.path);
-      }
+      if (req.file) fs.unlinkSync(req.file.path);
       return res.status(400).json({ message: 'Please provide all required fields' });
     }
 
@@ -44,6 +40,12 @@ const registerUser = async (req, res) => {
     let profilePicture = 'default-avatar.png';
     if (req.file) {
       profilePicture = req.file.filename;
+    }
+
+    // Prepare lookingFor (convert string to array if needed)
+    let lookingForArray = ['Any'];
+    if (lookingFor && lookingFor !== 'Any') {
+      lookingForArray = [lookingFor];
     }
 
     // Create new user
@@ -55,7 +57,11 @@ const registerUser = async (req, res) => {
       gender,
       bio: bio || '',
       profilePicture,
+      lookingFor: lookingForArray,
     });
+
+    // Extract interests from bio (and optionally from lookingFor? We'll just use bio)
+    await updateUserInterests(user);
 
     // Return user data with token
     res.status(201).json({
@@ -66,17 +72,14 @@ const registerUser = async (req, res) => {
       gender: user.gender,
       bio: user.bio,
       profilePicture: user.profilePicture,
-      role: user.role, // 👈 Added role
+      role: user.role,
+      lookingFor: user.lookingFor,
+      interests: user.interests,
       token: generateToken(user._id),
     });
   } catch (error) {
     console.error('Register error:', error);
-    
-    // If file was uploaded but there was an error, delete it
-    if (req.file) {
-      fs.unlinkSync(req.file.path);
-    }
-    
+    if (req.file) fs.unlinkSync(req.file.path);
     res.status(500).json({ message: 'Server error', error: error.message });
   }
 };
@@ -90,20 +93,16 @@ const loginUser = async (req, res) => {
   try {
     const { email, password } = req.body;
 
-    // Validate required fields
     if (!email || !password) {
       return res.status(400).json({ message: 'Please provide email and password' });
     }
 
-    // Find user by email and include password field (normally excluded)
     const user = await User.findOne({ email }).select('+password');
 
-    // Check if user exists and password matches
     if (!user || !(await user.matchPassword(password))) {
       return res.status(401).json({ message: 'Invalid email or password' });
     }
 
-    // Return user data with token
     res.json({
       _id: user._id,
       name: user.name,
@@ -112,7 +111,9 @@ const loginUser = async (req, res) => {
       gender: user.gender,
       bio: user.bio,
       profilePicture: user.profilePicture,
-      role: user.role, // 👈 Added role
+      role: user.role,
+      lookingFor: user.lookingFor,
+      interests: user.interests,
       token: generateToken(user._id),
     });
   } catch (error) {

@@ -34,7 +34,7 @@ npm run dev
 
 You should see:
 ```
-Server running on port 5000
+Server running on port 5001
 MongoDB Connected: 127.0.0.1
 ```
 
@@ -50,18 +50,21 @@ npm install
 ## Step 5: Start Frontend Development Server
 
 ```bash
-npm run dev
+cd frontend
+npm start
 ```
 
 You should see:
 ```
-VITE ready in XXX ms
-Local: http://localhost:5173/
+Compiled successfully!
+You can now view the app in the browser.
+
+Local: http://localhost:3000
 ```
 
 ## Step 6: Access the Application
 
-Open your browser and go to: `http://localhost:5173`
+Open your browser and go to: `http://localhost:3000`
 
 ## Step 7: Create Your First Account
 
@@ -131,12 +134,23 @@ To access the admin panel:
 
 ## Environment Variables
 
-Backend `.env` (already configured):
+Use the provided example files and do not commit real secrets.
+
+Backend example: `backend/.env.example`
+Frontend example: `frontend/.env.example`
+
+Backend `.env` should include:
 ```
-MONGO_URI=mongodb://127.0.0.1:27017/HIVmeddia
-JWT_SECRET=zelalemsecret123
-PORT=5000
-NODE_ENV=development
+PORT=5001
+MONGODB_URI=mongodb://127.0.0.1:27017/safe-connect
+JWT_SECRET=replace_with_a_secure_secret
+FRONTEND_URL=http://localhost:3000
+```
+
+Frontend `.env` should include:
+```
+REACT_APP_API_URL=http://localhost:5001/api
+REACT_APP_SOCKET_URL=http://localhost:5001
 ```
 
 ## Default Features

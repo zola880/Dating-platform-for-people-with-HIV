@@ -1,5 +1,6 @@
 // Post.js
 import React, { useState, useRef, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { likePost, unlikePost, addComment, deleteComment } from '../utils/postApi';
 import config from '../utils/config';
@@ -7,9 +8,11 @@ import './Post.css';
 
 const Post = ({ post, onDelete, isActive }) => {
   const { user } = useAuth();
+  const navigate = useNavigate();
+  const userId = user?._id;
   const [showComments, setShowComments] = useState(false);
   const [commentText, setCommentText] = useState('');
-  const [liked, setLiked] = useState(post.likes?.some(like => like._id === user._id) || false);
+  const [liked, setLiked] = useState(user ? post.likes?.some(like => like._id === userId) : false);
   const [likesCount, setLikesCount] = useState(post.likes?.length || 0);
   const [comments, setComments] = useState(post.comments || []);
   const [loading, setLoading] = useState(false);
@@ -45,7 +48,15 @@ const Post = ({ post, onDelete, isActive }) => {
     }
   }, [isActive, mediaType]);
 
+  useEffect(() => {
+    setLiked(user ? post.likes?.some(like => like._id === userId) : false);
+  }, [user, userId, post.likes]);
+
   const handleLike = async () => {
+    if (!user) {
+      navigate('/login');
+      return;
+    }
     try {
       setLoading(true);
       if (liked) {
@@ -65,6 +76,10 @@ const Post = ({ post, onDelete, isActive }) => {
   };
 
   const handleAddComment = async (e) => {
+    if (!user) {
+      navigate('/login');
+      return;
+    }
     e.preventDefault();
     if (!commentText.trim()) return;
     try {
@@ -80,6 +95,10 @@ const Post = ({ post, onDelete, isActive }) => {
   };
 
   const handleDeleteComment = async (commentId) => {
+    if (!user) {
+      navigate('/login');
+      return;
+    }
     if (!window.confirm('Delete this comment?')) return;
     try {
       setLoading(true);
@@ -93,6 +112,10 @@ const Post = ({ post, onDelete, isActive }) => {
   };
 
   const toggleFollow = () => {
+    if (!user) {
+      navigate('/login');
+      return;
+    }
     setIsFollowing(!isFollowing);
     // TODO: add actual follow/unfollow API call
   };
@@ -113,7 +136,7 @@ const Post = ({ post, onDelete, isActive }) => {
               {new Date(post.createdAt).toLocaleString()}
             </span>
           </div>
-          {post.user?._id === user._id && (
+          {post.user?._id === userId && (
             <button className="post-delete" onClick={() => onDelete(post._id)}>
               Delete
             </button>
@@ -168,7 +191,7 @@ const Post = ({ post, onDelete, isActive }) => {
                     {new Date(comment.createdAt).toLocaleString()}
                   </span>
                 </div>
-                {(comment.user?._id === user._id || post.user?._id === user._id) && (
+                {(comment.user?._id === userId || post.user?._id === userId) && (
                   <button
                     onClick={() => handleDeleteComment(comment._id)}
                     className="comment-delete"
@@ -178,18 +201,26 @@ const Post = ({ post, onDelete, isActive }) => {
                 )}
               </div>
             ))}
-            <form onSubmit={handleAddComment} className="add-comment">
-              <input
-                type="text"
-                placeholder="Write a comment..."
-                value={commentText}
-                onChange={(e) => setCommentText(e.target.value)}
-                disabled={loading}
-              />
-              <button type="submit" disabled={loading || !commentText.trim()}>
-                Post
-              </button>
-            </form>
+            {user ? (
+              <form onSubmit={handleAddComment} className="add-comment">
+                <input
+                  type="text"
+                  placeholder="Write a comment..."
+                  value={commentText}
+                  onChange={(e) => setCommentText(e.target.value)}
+                  disabled={loading}
+                />
+                <button type="submit" disabled={loading || !commentText.trim()}>
+                  Post
+                </button>
+              </form>
+            ) : (
+              <div className="login-to-comment">
+                <button type="button" onClick={() => navigate('/login')} className="comment-login-btn">
+                  Log in to comment
+                </button>
+              </div>
+            )}
           </div>
         )}
       </div>
